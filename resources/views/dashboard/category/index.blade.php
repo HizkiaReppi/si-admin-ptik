@@ -57,13 +57,11 @@
                                             href="{{ route('dashboard.category.edit', $category->slug) }}">
                                             <i class="bx bx-edit-alt me-1"></i> Edit
                                         </a>
-                                        <form method="POST" action="{{ route('dashboard.category.destroy', $category->slug) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="dropdown-item" data-confirm-delete="true">
-                                                <i class="bx bx-trash me-1"></i> Delete
-                                            </button>
-                                        </form>
+                                        <a class="dropdown-item"
+                                            href="{{ route('dashboard.category.destroy', $category->slug) }}"
+                                            data-confirm-delete="true">
+                                            <i class="bx bx-trash me-1"></i> Delete
+                                        </a>
                                     </div>
                                 </div>
                             </td>

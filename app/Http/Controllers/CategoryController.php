@@ -24,6 +24,10 @@ class CategoryController extends Controller
      */
     public function index(): View
     {
+        $title = 'Apakah anda yakin?';
+        $text = 'Anda tidak akan bisa mengembalikannya!';
+        confirmDelete($title, $text);
+
         $categories = Category::with('requirements')->get();
 
         return view('dashboard.category.index', compact('categories'));
@@ -160,6 +164,23 @@ class CategoryController extends Controller
      */
     public function destroy(Category $kategori)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            foreach ($kategori->requirements as $requirement) {
+                if ($requirement->file_path) {
+                    Storage::delete($requirement->file_path);
+                }
+                $requirement->delete();
+            }
+
+            $kategori->delete();
+
+            DB::commit();
+            return redirect()->route('dashboard.category.index')->with('toast_success', 'Kategori deleted successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('toast_error', 'Failed to delete Kategori. Please try again.');
+        }
     }
 }
