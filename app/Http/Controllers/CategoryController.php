@@ -58,14 +58,16 @@ class CategoryController extends Controller
             $category->save();
 
             if (isset($validatedData['requirements'])) {
-                foreach ($validatedData['requirements'] as $requirement) {
+                foreach ($validatedData['requirements'] as $index => $requirement) {
                     $filePath = null;
                     if (isset($requirement['file'])) {
-                        $filePath = $requirement['file']->store('requirements');
+                        $file = $requirement['file'];
+                        $fileName = time() . '_' . $category->slug . '_persyaratan_' . $index + 1 . '.' . $file->getClientOriginalExtension();
+                        $filePath = $file->storeAs('public/file/requirements', $fileName);
                     }
                     $category->requirements()->create([
                         'name' => $requirement['name'],
-                        'file_path' => $filePath,
+                        'file_path' => $filePath ? Storage::url($filePath) : null,
                     ]);
                 }
             }

@@ -33,7 +33,7 @@
                                         @foreach($category->requirements as $requirement)
                                             <li>
                                                 @if($requirement->file_path)
-                                                    <a href="{{ Storage::url($requirement->file_path) }}" target="_blank">{{ $requirement->name }}</a>
+                                                    <a href="{{ $requirement->file_path }}" target="_blank">{{ $requirement->name }}</a>
                                                 @else
                                                     {{ $requirement->name }}
                                                 @endif
