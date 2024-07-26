@@ -1,17 +1,35 @@
 # Sistem Informasi Admin PTIK
 
+## Fitur
+
+1. Mahasiswa
+    - Mengajukan permohonan pembuatan surat (Tahap Pengembangan)
+    - Melihat status permohonan surat (Tahap Pengembangan)
+2. Ketua Jurusan
+    - Melihat aktivitas pengajuan surat (Tahap Pengembangan)
+    - Menyetujui atau menolak pengajuan surat (Tahap Pengembangan)
+3. Admin
+    - Manajemen Dosen
+    - Manajemen Mahasiswa
+    - Manajemen Ketua Jurusan
+    - Manajemen Kategori
+    - Manajemen Pengajuan Surat (Tahap Pengembangan)
+4. Lainnya
+    - Lupa & Reset Password
+    - Edit Profile
+
 ## Cara Penggunaan
 
 1. Clone repository
 
 ```bash
-$ git clone https://github.com/HizkiaReppi/sistem-informasi-bimbingan-skripsi.git
+$ git clone https://github.com/HizkiaReppi/si-admin-ptik.git
 ```
 
 2. Buka terminal dan arahkan ke direktori repository
 
 ```bash
-$ cd sistem-informasi-bimbingan-skripsi
+$ cd si-admin-ptik
 ```
 
 3. Install dependencies php dengan perintah `composer install`
