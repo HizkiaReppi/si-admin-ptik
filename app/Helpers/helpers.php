@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
 if (!function_exists('formatNIP')) {
     function formatNIP($nip)
     {
@@ -106,5 +109,33 @@ if(!function_exists('getCurrentSemesterStudent')) {
         }
 
         return $semesterElapsed;
+    }
+}
+
+if(!function_exists('generateSlug')) {
+/**
+     * Generate a unique slug for a model.
+     *
+     * @param Model $model The model instance for which the slug is generated.
+     * @param string $title The title from which the slug is derived.
+     * @param string $column The column name to check for uniqueness.
+     * @return string The generated unique slug.
+     */
+    function generateSlug(Model $model, string $title, string $column = 'slug'): string
+    {
+        $slug = Str::slug($title);
+
+        // Check if the generated slug already exists in the specified column of the model's table
+        $checkSlug = $model::query()->where($column, $slug)->first();
+
+        if ($checkSlug) {
+            // Append a random string to the original title to create a new slug
+            $title = sprintf("%s %s", $title, Str::random(mt_rand(5, 10)));
+
+            // Recursively call the function with the updated title to generate a new slug
+            return generateSlug($model, $title, $column);
+        }
+
+        return $slug;
     }
 }

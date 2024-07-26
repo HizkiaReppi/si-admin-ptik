@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExamResultController;
 use App\Http\Controllers\GuidanceActivityController;
@@ -37,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/dosen', LecturerController::class)->names('dashboard.lecturer');
     Route::resource('/mahasiswa', StudentController::class)->names('dashboard.student');
     Route::resource('/ketua-jurusan', HeadOfDepartmentController::class)->names('dashboard.kajur');
+    Route::resource('/kategori', CategoryController::class)->names('dashboard.category');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/admin', [ProfileController::class, 'update_admin'])->name('profile.update.admin');

@@ -22,8 +22,17 @@
         @can('admin')
             <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <a href="{{ route('dashboard') }}" class="menu-link">
-                    <i class="menu-icon tf-icons fa-solid fa-list-check"></i>
+                    <i class="menu-icon tf-icons fa-solid fa-chart-line"></i>
                     <div data-i18n="Bimbingan">Dashboard</div>
+                </a>
+            </li>
+            <li class="menu-header small text-uppercase">
+              <span class="menu-header-text">Manajemen Surat</span>
+            </li>
+            <li class="menu-item {{ request()->routeIs('dashboard.category.*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.category.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons fa-solid fa-list"></i>
+                    <div data-i18n="Kategori">Kategori</div>
                 </a>
             </li>
             <li class="menu-header small text-uppercase">
