@@ -1,35 +1,4 @@
-# Sistem Informasi Bimbingan Skripsi
-
-## Deskripsi
-
-Sistem Informasi Bimbingan Skripsi adalah sebuah sistem informasi yang digunakan untuk mempermudah proses bimbingan skripsi antara dosen pembimbing dan mahasiswa. Sistem ini memungkinkan mahasiswa untuk mengajukan jadwal bimbingan skripsi, melihat jadwal bimbingan skripsi, dan melihat catatan bimbingan skripsi. Sistem ini juga memungkinkan dosen pembimbing untuk menyetujui atau menolak jadwal bimbingan skripsi yang diajukan oleh mahasiswa, memberikan catatan bimbingan skripsi, dan melihat catatan bimbingan skripsi.
-
-## Fitur
-
-1. Mahasiswa
-    - Mengajukan jadwal bimbingan skripsi
-    - Mengubah jadwal bimbingan skripsi
-    - Melihat jadwal bimbingan skripsi
-    - Melihat catatan hasil review skripsi
-    - Mengajukan permintaan ujian hasil
-    - Cetak surat persetujuan ujian
-2. Dosen Pembimbing
-    - Menyetujui atau menolak jadwal bimbingan skripsi
-    - Memberikan catatan dan upload file hasil review skripsi
-    - Melihat catatan bimbingan skripsi
-    - Menyetujui atau menolak permintaan ujian hasil
-3. Ketua Jurusan
-    - Melihat aktivitas bimbingan skripsi
-    - Menyetujui atau menolak permintaan ujian hasil
-4. Admin
-    - Manajemen Dosen
-    - Manajemen Mahasiswa
-    - Manajemen Ketua Jurusan
-    - Manajemen Bimbingan
-    - Manajemen Ujian Hasil
-5. Lainnya
-    - Lupa & Reset Password
-    - Edit Profile
+# Sistem Informasi Admin PTIK
 
 ## Cara Penggunaan
 
