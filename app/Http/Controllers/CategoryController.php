@@ -83,7 +83,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(Category $kategori)
     {
         //
     }
@@ -91,23 +91,74 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(Category $kategori)
     {
-        //
+        return view('dashboard.category.edit', compact('kategori'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, Category $kategori)
     {
-        //
+        $rulesValidated = [
+            'requirements' => ['sometimes', 'array'],
+            'requirements.*.name' => ['required', 'string', 'max:255'],
+            'requirements.*.file' => ['sometimes', 'file', 'mimes:pdf,doc,docx'],
+        ];
+
+        if($request->name != $kategori->name) {
+            $rulesValidated['name'] = ['required', 'string', 'min:2', 'max:255', 'unique:categories'];
+        }
+
+        $validatedData = $request->validate($rulesValidated);
+
+        $categoryName = !empty($validatedData['name']) ? $validatedData['name'] : $kategori->name;
+
+        DB::beginTransaction();
+
+        try {
+            if($request->name != $kategori->name) {
+                $kategori->name = $categoryName;
+                $kategori->slug = generateSlug($kategori, $categoryName);
+                $kategori->save();
+            }
+
+            // Delete existing requirements
+            foreach ($kategori->requirements as $requirement) {
+                if ($requirement->file_path) {
+                    Storage::delete($requirement->file_path);
+                }
+                $requirement->delete();
+            }
+
+            // Create new requirements
+            if (isset($validatedData['requirements'])) {
+                foreach ($validatedData['requirements'] as $index => $requirement) {
+                    $filePath = null;
+                    if (isset($requirement['file'])) {
+                        $fileName = time() . '_' . str_replace(' ', '_', $kategori->name) . '_persyaratan_' . $index . '.' . $requirement['file']->getClientOriginalExtension();
+                        $filePath = $requirement['file']->storeAs('public/file/requirements', $fileName);
+                    }
+                    $kategori->requirements()->create([
+                        'name' => $requirement['name'],
+                        'file_path' => $filePath,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('dashboard.category.index')->with('toast_success', 'Kategori updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->with('toast_error', 'Failed to update Kategori. Please try again.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Category $kategori)
     {
         //
     }
