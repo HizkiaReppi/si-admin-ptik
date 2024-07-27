@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Models\Lecturer;
+use App\Models\Submission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Gate;
@@ -21,7 +22,8 @@ class DashboardController extends Controller
 
         $totalStudents = Student::count();
         $totalLecturers = Lecturer::count();
+        $totalSubmission = Submission::count();
 
-        return view('dashboard.index', compact('totalStudents',  'totalLecturers'));
+        return view('dashboard.index', compact('totalStudents',  'totalLecturers', 'totalSubmission'));
     }
 }

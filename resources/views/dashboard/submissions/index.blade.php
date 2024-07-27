@@ -12,9 +12,9 @@
             <table class="table" id="table">
                 <thead>
                     <tr>
-                        <th class="text-start">Nama</th>
+                        <th class="text-center">Nama</th>
                         <th class="text-center">NIM</th>
-                        <th class="text-start">Tipe Pengajuan</th>
+                        <th class="text-center">Tipe Pengajuan</th>
                         <th class="text-center">Waktu Pengajuan</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Aksi</th>
