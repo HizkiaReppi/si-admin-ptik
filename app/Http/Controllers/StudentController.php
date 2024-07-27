@@ -78,7 +78,7 @@ class StudentController extends Controller
             $student = new Student();
             $student->user_id = $user->id;
             $student->lecturer_id_1 = $validatedData['lecturer_id_1'];
-            $student->lecturer_id_2 = $validatedData['lecturer_id_2'];
+            $student->lecturer_id_2 = $validatedData['lecturer_id_2'] !== "choose" ? $validatedData['lecturer_id_2'] : null;
             $student->nim = $validatedData['nim'];
             $student->batch = $validatedData['angkatan'];
             $student->concentration = $validatedData['konsentrasi'];
@@ -91,6 +91,7 @@ class StudentController extends Controller
             return redirect()->route('dashboard.student.index')->with('toast_success', 'Student added successfully');
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e);
             return redirect()->back()->withInput()->with('toast_error', 'Failed to add Student. Please try again.');
         }
     }
@@ -155,7 +156,7 @@ class StudentController extends Controller
             $mahasiswa->user->save();
 
             $mahasiswa->lecturer_id_1 = $validatedData['lecturer_id_1'];
-            $mahasiswa->lecturer_id_2 = $validatedData['lecturer_id_2'];
+            $mahasiswa->lecturer_id_2 = $validatedData['lecturer_id_2'] !== "choose" ? $validatedData['lecturer_id_2'] : null;
             $mahasiswa->batch = $validatedData['angkatan'];
             $mahasiswa->concentration = $validatedData['konsentrasi'];
             $mahasiswa->phone_number = $validatedData['no-hp'];
