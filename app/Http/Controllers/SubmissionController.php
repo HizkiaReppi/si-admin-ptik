@@ -63,7 +63,7 @@ class SubmissionController extends Controller
                 $category = Category::findOrFail($validatedData['category_id']);
                 $requirementName = $category->requirements[$index]->name;
                 $fileName = time() . '_' . str_replace(' ', '_', $category->name) . '_' . str_replace(' ', '_', $requirementName) . '.' . $file->getClientOriginalExtension();
-                $filePath = $file->storeAs('public/file/submissions', $fileName);
+                $filePath = $file->storeAs('file/submissions', $fileName);
 
                 $submission->files()->create([
                     'file_path' => $filePath,

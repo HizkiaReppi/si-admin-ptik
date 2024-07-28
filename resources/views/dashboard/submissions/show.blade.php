@@ -34,7 +34,7 @@
                     <div class="mb-3 col-6 col-md-4">
                         <label for="requirement_{{ $loop->index }}" class="form-label">{{ $requirementName }}</label><br>
                         <a href="{{ asset('storage/' . $file->file_path) }}" class="btn btn-secondary"
-                            target="_blank">Download</a>
+                            download>Download</a>
                     </div>
                 @endforeach
             </div>
