@@ -71,7 +71,7 @@ class SubmissionController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('dashboard.submissions.index')->with('toast_success', 'Pengajuan surat berhasil diajukan');
+            return redirect()->route('dashboard.submission.index')->with('toast_success', 'Pengajuan surat berhasil diajukan');
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e);
@@ -118,7 +118,8 @@ class SubmissionController extends Controller
      */
     public function show(Submission $pengajuan_surat)
     {
-        //
+        $submission = Submission::with(['category', 'student'])->find($pengajuan_surat->id);
+        return view('dashboard.submissions.show', compact('submission'));
     }
 
     /**
