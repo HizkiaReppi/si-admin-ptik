@@ -35,6 +35,12 @@
                     <div data-i18n="Kategori">Kategori</div>
                 </a>
             </li>
+            <li class="menu-item {{ request()->routeIs('dashboard.submission.*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.submission.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons fa-solid fa-envelopes-bulk"></i>
+                    <div data-i18n="Pengajuan Surat">Pengajuan Surat</div>
+                </a>
+            </li>
             <li class="menu-header small text-uppercase">
               <span class="menu-header-text">Manajemen Pengguna</span>
             </li>

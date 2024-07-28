@@ -28,7 +28,7 @@ class CategoryController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $categories = Category::with('requirements')->get();
+        $categories = Category::with(['requirements', 'submissions'])->get();
 
         return view('dashboard.category.index', compact('categories'));
     }

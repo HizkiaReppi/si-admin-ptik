@@ -6,6 +6,7 @@ use App\Http\Controllers\HeadOfDepartmentController;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +26,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('/mahasiswa', StudentController::class)->names('dashboard.student');
     Route::resource('/ketua-jurusan', HeadOfDepartmentController::class)->names('dashboard.kajur');
     Route::resource('/kategori', CategoryController::class)->names('dashboard.category');
+    Route::resource('/pengajuan-surat', SubmissionController::class)->names('dashboard.submission');
+    Route::get('/pengajuan-surat/create/{category}', [SubmissionController::class, 'create_student'])->name('dashboard.submission.student.create');
+    Route::post('/pengajuan-surat/create/{category}', [SubmissionController::class, 'store_student'])->name('dashboard.submission.student.store');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/admin', [ProfileController::class, 'update_admin'])->name('profile.update.admin');

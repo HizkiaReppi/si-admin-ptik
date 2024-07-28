@@ -139,3 +139,22 @@ if(!function_exists('generateSlug')) {
         return $slug;
     }
 }
+
+if(!function_exists('parseSubmissionStatus')) {
+    /**
+     * Parse the status of a submission.
+     *
+     * @param string $status The status of the submission.
+     * @return string The parsed status.
+     */
+
+    function parseSubmissionStatus(string $status): string
+    {
+        if($status == 'submitted') return 'Diajukan';
+        else if($status == 'pending') return 'Diproses';
+        else if($status == 'proses_kajur') return 'Proses Kajur';
+        else if($status == 'proses_dekan') return 'Proses Dekan';
+        else if($status == 'done') return 'Selesai';
+        else return $status;
+    }
+}

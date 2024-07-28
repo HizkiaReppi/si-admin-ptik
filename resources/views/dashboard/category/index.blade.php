@@ -15,13 +15,15 @@
                         <th class="text-center">No</th>
                         <th class="text-center">Nama</th>
                         <th class="text-center">Persyaratan</th>
+                        <th class="text-center">Total <br> Surat</th>
+                        <th class="text-center">Surat <br> Selesai</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
                     @foreach ($categories as $category)
                         <tr>
-                            <td class="text-center text-nowrap">{{ $loop->index + 1 }}</td>
+                            <td class="text-center">{{ $loop->index + 1 }}</td>
                             <td class="fw-medium">{{ $category->name }}</td>
                             <td class="text-nowrap">
                                 @if($category->requirements->isEmpty())
@@ -42,7 +44,9 @@
                                     </ul>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center">{{ $category->submissions->count() }}</td>
+                            <td class="text-center">{{ $category->submissions->where('status', 'done')->count() }}</td>
+                            <td class="text-center">
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                         data-bs-toggle="dropdown">

@@ -24,6 +24,11 @@ class Category extends Model
         return $this->hasMany(Requirement::class);
     }
 
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(Submission::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
