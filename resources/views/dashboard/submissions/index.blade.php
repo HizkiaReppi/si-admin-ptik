@@ -28,7 +28,7 @@
                             <td class="text-center">{{ $submission->category->name }}</td>
                             <td class="text-center">{{ $submission->created_at->diffForHumans() }}</td>
                             <td class="text-center">{{ parseSubmissionStatus($submission->status) }}</td>
-                            <td class="d-flex justify-content-center">
+                            <td class="text-center">
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                         data-bs-toggle="dropdown">

@@ -46,7 +46,7 @@
                             </td>
                             <td class="text-center">{{ $category->submissions->count() }}</td>
                             <td class="text-center">{{ $category->submissions->where('status', 'done')->count() }}</td>
-                            <td>
+                            <td class="text-center">
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                         data-bs-toggle="dropdown">
