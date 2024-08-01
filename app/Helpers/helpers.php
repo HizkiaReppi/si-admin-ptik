@@ -151,10 +151,13 @@ if(!function_exists('parseSubmissionStatus')) {
     function parseSubmissionStatus(string $status): string
     {
         if($status == 'submitted') return 'Diajukan';
-        else if($status == 'pending') return 'Diproses';
+        else if($status == 'pending') return 'Wajib Menghadap';
         else if($status == 'proses_kajur') return 'Proses Kajur';
         else if($status == 'proses_dekan') return 'Proses Dekan';
         else if($status == 'done') return 'Selesai';
+        else if($status == 'rejected') return 'Ditolak';
+        else if($status == 'canceled') return 'Dibatalkan';
+        else if($status == 'expired') return 'Kadaluarsa';
         else return $status;
     }
 }

@@ -38,7 +38,6 @@ class SubmissionController extends Controller
         return view('frontend.submissions.create', compact('category'));
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
@@ -119,7 +118,17 @@ class SubmissionController extends Controller
     public function show(Submission $pengajuan_surat)
     {
         $submission = Submission::with(['category', 'student'])->find($pengajuan_surat->id);
-        return view('dashboard.submissions.show', compact('submission'));
+        $statuses = [
+            'submitted' => 'Diajukan',
+            'pending' => 'Wajib Menghadap',
+            'proses_kajur' => 'Proses Kajur',
+            'proses_dekan' => 'Proses Dekan',
+            'done' => 'Selesai',
+            'rejected' => 'Ditolak',
+            'canceled' => 'Dibatalkan',
+            'expired' => 'Kadaluarsa',
+        ];
+        return view('dashboard.submissions.show', compact('submission', 'statuses'));
     }
 
     /**
@@ -133,9 +142,27 @@ class SubmissionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Submission $pengajuan_surat)
+    public function update(Request $request, Submission $pengajuan_surat): RedirectResponse
     {
-        //
+        $validatedData = $request->validate([
+            'status' => ['required', 'in:submitted,pending,proses_kajur,proses_dekan,done,rejected,canceled,expired'],
+            'note' => ['nullable', 'string'],
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $pengajuan_surat->status = $validatedData['status'];
+            $pengajuan_surat->note = $validatedData['note'] ?? $pengajuan_surat->note;
+            $pengajuan_surat->save();
+
+            DB::commit();
+            return redirect()->route('dashboard.submission.index')->with('toast_success', 'Pengajuan surat berhasil diperbarui');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            return redirect()->back()->withInput()->with('toast_error', 'Failed to update submission. Please try again.');
+        }
     }
 
     /**

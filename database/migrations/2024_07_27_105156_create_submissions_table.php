@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('student_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['submitted', 'pending', 'proses_kajur', 'proses_dekan', 'done'])->default('submitted');
+            $table->enum('status', ['submitted', 'pending', 'proses_kajur', 'proses_dekan', 'done', 'rejected', 'canceled', 'expired'])->default('submitted');
             $table->text('note')->nullable();
             $table->string('file_result')->nullable();
             $table->timestamps();

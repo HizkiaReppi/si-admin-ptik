@@ -32,7 +32,8 @@
                         $requirementName = str_replace('.pdf', '', $requirementName);
                     @endphp
                     <div class="mb-3 col-6 col-md-4">
-                        <label for="requirement_{{ $loop->index }}" class="form-label">{{ $requirementName }}</label><br>
+                        <label for="requirement_{{ $loop->index }}"
+                            class="form-label">{{ $requirementName }}</label><br>
                         <a href="{{ asset('storage/' . $file->file_path) }}" class="btn btn-secondary"
                             download>Download</a>
                     </div>
@@ -93,13 +94,11 @@
                         @if ($submission->student->phone_number)
                             <a href="tel:+{{ $phone_number }}"
                                 class="d-flex btn-sm align-items-center btn btn-outline-secondary">
-                                <i class="fa-solid fa-phone me-2"></i>
-                                Telepon
+                                <i class="fa-solid fa-phone me-2"></i> Telepon
                             </a>
                             <a href="https://wa.me/{{ $phone_number }}"
                                 class="d-flex align-items-center btn btn-sm btn-outline-secondary">
-                                <i class="fa fa-whatsapp me-2"></i>
-                                Whatsapp
+                                <i class="fa fa-whatsapp me-2"></i> Whatsapp
                             </a>
                         @endif
                     </div>
@@ -118,8 +117,82 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex mb-4 ms-3" style="margin-top: -15px">
+        <div class="d-flex gap-2 mb-4 ms-3" style="margin-top: -15px">
             <a href="{{ route('dashboard.submission.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Respon Pengajuan
+            </button>
         </div>
     </div>
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Respon Pengajuan</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{{ route('dashboard.submission.update', $submission->id) }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="mb-3">
+                            <label class="form-label" for="status">Status</label>
+                            <select id="status" name="status"
+                                class="form-control {{ $errors->get('status') ? 'border-danger' : '' }}">
+                                @foreach ($statuses as $status => $label)
+                                    <option value="{{ $status }}"
+                                        {{ old('status', $submission->status) == $status ? 'selected' : '' }}>
+                                        {{ $label }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error class="mt-2" :messages="$errors->get('status')" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="note" id="noteLabel">Catatan <span id="noteOptional">(Opsional)</span></label>
+                            <textarea class="form-control {{ $errors->get('note') ? 'border-danger' : '' }}" id="note" name="note"
+                                placeholder="Catatan" autocomplete="note">{{ old('note', $submission->note) }}</textarea>
+                            <x-input-error class="mt-2" :messages="$errors->get('note')" />
+                        </div>
+
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary" id="submit">Simpan Respon</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusSelect = document.getElementById('status');
+            const noteTextarea = document.getElementById('note');
+            const noteOptional = document.getElementById('noteOptional');
+
+            function updateNoteField() {
+                const selectedStatus = statusSelect.value;
+                const requiredStatuses = ['pending', 'rejected', 'canceled', 'expired'];
+
+                if (requiredStatuses.includes(selectedStatus)) {
+                    noteTextarea.setAttribute('required', 'required');
+                    noteOptional.style.display = 'none';
+                } else {
+                    noteTextarea.removeAttribute('required');
+                    noteOptional.style.display = 'inline';
+                }
+            }
+
+            // Initial call to set the state based on the current value
+            updateNoteField();
+
+            // Add event listener to update the state when the value changes
+            statusSelect.addEventListener('change', updateNoteField);
+        });
+    </script>
 </x-dashboard-layout>
