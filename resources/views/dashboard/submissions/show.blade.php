@@ -4,12 +4,36 @@
     </x-slot>
 
     <div class="card mb-4">
-        <h5 class="card-header">Detail Mahasiswa</h5>
+        <h5 class="card-header">Detail Pengajuan</h5>
         <div class="card-body pb-2">
             <div class="row">
-                <div class="mb-3 col-md-12">
-                    <label for="fullname" class="form-label">Tipe Pengajuan</label>
+                <div class="mb-3 col-md-6">
+                    <label for="category" class="form-label">Tipe Pengajuan</label>
                     <p class="border p-2 rounded m-0">{{ $submission->category->name }}</p>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="status" class="form-label">Status Pengajuan</label>
+                    <p class="border p-2 rounded m-0">
+                        <span class="badge text-bg-{{parseSubmissionBadgeClassNameStatus($submission->status)}}">
+                            {{ parseSubmissionStatus($submission->status) }}
+                        </span>
+                    </p>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="category" class="form-label">Waktu Pengajuan</label>
+                    <p class="border p-2 rounded m-0">
+                        {{ $submission->created_at . " (" . $submission->created_at->diffForHumans() . ")" }}
+                    </p>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="category" class="form-label">Terakhir Diubah</label>
+                    <p class="border p-2 rounded m-0">
+                        {{ $submission->updated_at . " (" . $submission->updated_at->diffForHumans() . ")" }}
+                    </p>
+                </div>
+                <div class="mb-3 col-md-12">
+                    <label for="note" class="form-label">Catatan Dari Admin</label>
+                    <p class="border p-2 rounded m-0">{{ $submission->note ?? '-' }}</p>
                 </div>
 
                 {{-- Tampilkan Persyaratan Yang Telah diisi user --}}
@@ -119,6 +143,9 @@
         </div>
         <div class="d-flex gap-2 mb-4 ms-3" style="margin-top: -15px">
             <a href="{{ route('dashboard.submission.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
+            <a class="btn btn-danger" href="{{ route('dashboard.submission.destroy', $submission->id) }}" data-confirm-delete="true">
+                Hapus Pengajuan
+            </a>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                 Respon Pengajuan
             </button>

@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/mahasiswa', StudentController::class)->names('dashboard.student');
     Route::resource('/ketua-jurusan', HeadOfDepartmentController::class)->names('dashboard.kajur');
     Route::resource('/kategori', CategoryController::class)->names('dashboard.category');
-    Route::resource('/pengajuan-surat', SubmissionController::class)->names('dashboard.submission');
+    Route::resource('/pengajuan-surat', SubmissionController::class)->names('dashboard.submission')->except('edit');
     Route::get('/pengajuan-surat/create/{category}', [SubmissionController::class, 'create_student'])->name('dashboard.submission.student.create');
     Route::post('/pengajuan-surat/create/{category}', [SubmissionController::class, 'store_student'])->name('dashboard.submission.student.store');
 

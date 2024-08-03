@@ -161,3 +161,25 @@ if(!function_exists('parseSubmissionStatus')) {
         else return $status;
     }
 }
+
+if(!function_exists('parseSubmissionBadgeClassNameStatus')) {
+    /**
+     * Parse the type of a submission.
+     *
+     * @param string $type The type of the submission.
+     * @return string The parsed type.
+     */
+
+    function parseSubmissionBadgeClassNameStatus(string $type): string
+    {
+        if($type == 'submitted') return 'primary';
+        else if($type == 'pending') return 'warning';
+        else if($type == 'proses_kajur') return 'info';
+        else if($type == 'proses_dekan') return 'info';
+        else if($type == 'done') return 'success';
+        else if($type == 'rejected') return 'danger';
+        else if($type == 'canceled') return 'danger';
+        else if($type == 'expired') return 'secondary';
+        else return 'secondary';
+    }
+}

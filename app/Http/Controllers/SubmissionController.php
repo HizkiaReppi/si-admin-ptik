@@ -8,14 +8,20 @@ use App\Models\Submission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class SubmissionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
+        $title = 'Apakah anda yakin?';
+        $text = 'Anda tidak akan bisa mengembalikannya!';
+        confirmDelete($title, $text);
+
         $submissions = Submission::with(['category', 'student'])->get();
         return view('dashboard.submissions.index', compact('submissions'));
     }
@@ -23,7 +29,7 @@ class SubmissionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
         $students = Student::with('user')->get();
         $categories = Category::with('requirements')->get();
@@ -33,7 +39,7 @@ class SubmissionController extends Controller
     /**
      * Show the form for student for creating a new resource.
      */
-    public function create_student(Category $category)
+    public function create_student(Category $category): View
     {
         return view('frontend.submissions.create', compact('category'));
     }
@@ -115,8 +121,12 @@ class SubmissionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Submission $pengajuan_surat)
+    public function show(Submission $pengajuan_surat): View
     {
+        $title = 'Apakah anda yakin?';
+        $text = 'Anda tidak akan bisa mengembalikannya!';
+        confirmDelete($title, $text);
+        
         $submission = Submission::with(['category', 'student'])->find($pengajuan_surat->id);
         $statuses = [
             'submitted' => 'Diajukan',
@@ -129,14 +139,6 @@ class SubmissionController extends Controller
             'expired' => 'Kadaluarsa',
         ];
         return view('dashboard.submissions.show', compact('submission', 'statuses'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Submission $pengajuan_surat)
-    {
-        //
     }
 
     /**
@@ -168,8 +170,29 @@ class SubmissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Submission $pengajuan_surat)
+    public function destroy(Submission $pengajuan_surat): RedirectResponse
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $pengajuan_surat->delete();
+
+            foreach ($pengajuan_surat->files as $file) {
+                if($file->file_path) {
+                    Storage::delete($file->file_path);
+                    $file->delete();
+                }
+            }
+
+            if($pengajuan_surat->file_result) {
+                Storage::delete($pengajuan_surat->file_result);
+            }
+
+            DB::commit();
+            return redirect()->route('dashboard.submission.index')->with('toast_success', 'Pengajuan surat berhasil dihapus');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('toast_error', 'Gagal menghapus pengajuan surat. Silakan coba lagi.');
+        }
     }
 }

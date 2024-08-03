@@ -12,8 +12,8 @@
             <table class="table" id="table">
                 <thead>
                     <tr>
-                        <th class="text-center">Nama</th>
                         <th class="text-center">NIM</th>
+                        <th class="text-center">Nama</th>
                         <th class="text-center">Tipe Pengajuan</th>
                         <th class="text-center">Waktu Pengajuan</th>
                         <th class="text-center">Status</th>
@@ -23,25 +23,32 @@
                 <tbody class="table-border-bottom-0">
                     @foreach ($submissions as $submission)
                         <tr>
-                            <td class="fw-medium">{{ $submission->student->fullname }}</td>
                             <td class="text-center text-nowrap">{{ $submission->student->formattedNIM }}</td>
+                            <td class="fw-medium">{{ $submission->student->fullname }}</td>
                             <td class="text-center">{{ $submission->category->name }}</td>
                             <td class="text-center">{{ $submission->created_at->diffForHumans() }}</td>
-                            <td class="text-center">{{ parseSubmissionStatus($submission->status) }}</td>
                             <td class="text-center">
+                                <span class="badge text-bg-{{parseSubmissionBadgeClassNameStatus($submission->status)}}">
+                                    {{ parseSubmissionStatus($submission->status) }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                @if ($submission->status !== 'done')
+                                    <a class="dropdown-item"
+                                            href="{{ route('dashboard.submission.show', $submission->id) }}">
+                                            <i class="bx bxs-user-detail me-1"></i> Detail
+                                        </a>
+                                @else
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                         data-bs-toggle="dropdown">
                                         <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
+
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item"
                                             href="{{ route('dashboard.submission.show', $submission->id) }}">
                                             <i class="bx bxs-user-detail me-1"></i> Detail
-                                        </a>
-                                        <a class="dropdown-item"
-                                            href="{{ route('dashboard.submission.edit', $submission->id) }}">
-                                            <i class="bx bx-edit-alt me-1"></i> Edit
                                         </a>
                                         <a class="dropdown-item"
                                             href="{{ route('dashboard.submission.destroy', $submission->id) }}"
@@ -50,6 +57,7 @@
                                         </a>
                                     </div>
                                 </div>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
