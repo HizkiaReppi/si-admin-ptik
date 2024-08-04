@@ -26,7 +26,7 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Sidebar -->
-            @include('components.sidebar')
+            <x-sidebar />
 
             <!-- Layout container -->
             <div class="layout-page">

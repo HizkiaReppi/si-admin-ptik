@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="card p-4">
-        <form method="post" action="{{ route('dashboard.submission.store', $category->slug) }}" enctype="multipart/form-data">
+        <form method="post" action="{{ route('dashboard.submission.student.store', $category->slug) }}" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
