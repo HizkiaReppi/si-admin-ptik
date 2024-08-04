@@ -30,12 +30,12 @@ class AuthenticatedSessionController extends Controller
 
         if(Auth::user()->role == 'admin'){
             return redirect()->intended(route('dashboard', absolute: false));
-        } else if(Auth::user()->role == 'lecturer'){
-            return redirect()->intended(route('dashboard.atur-jadwal-bimbingan.index', absolute: false));
+        } else if(Auth::user()->role == 'lecturer'){ // TODO: FIX THIS LATER
+            return redirect()->intended(route('dashboard', absolute: false));
         } else if(Auth::user()->role == 'student'){
-            return redirect()->intended(route('dashboard.bimbingan.index', absolute: false));
-        } else if(Auth::user()->role == 'HoD'){
-            return redirect()->intended(route('dashboard.aktivitas-bimbingan.index', absolute: false));
+            return redirect()->intended(route('dashboard.submission.student.index', absolute: false));
+        } else if(Auth::user()->role == 'HoD'){ // TODO: FIX THIS LATER
+            return redirect()->intended(route('dashboard', absolute: false));
         } else {
             return redirect()->intended('/');
         }
