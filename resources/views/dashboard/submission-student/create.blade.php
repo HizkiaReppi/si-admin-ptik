@@ -35,7 +35,7 @@
 
             <div>
                 <button type="submit" class="btn btn-primary">Ajukan Surat</button>
-                <a href="{{ route('dashboard.submission.index') }}" class="btn btn-outline-secondary ms-2">Batal</a>
+                <a href="{{ route('dashboard.submission.student.index') }}" class="btn btn-outline-secondary ms-2">Batal</a>
             </div>
         </form>
     </div>

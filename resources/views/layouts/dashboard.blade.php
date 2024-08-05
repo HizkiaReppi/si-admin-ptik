@@ -41,11 +41,11 @@
                                 @if (isset($header))
                                     <header class="card">
                                         <div class="d-flex align-items-end row">
-                                            <div class="col-sm-7">
+                                            <div class="">
                                                 <div class="card-body">
                                                     <h5 class="card-title text-primary">{{ $header }}</h5>
                                                     @if (isset($header_subtitle))
-                                                        <p class="mb-4">
+                                                        <p class="mb-0">
                                                             {{ $header_subtitle }}
                                                         </p>
                                                     @endif

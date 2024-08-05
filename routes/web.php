@@ -30,8 +30,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('/ketua-jurusan', HeadOfDepartmentController::class)->names('dashboard.kajur');
     Route::resource('/kategori', CategoryController::class)->names('dashboard.category');
     Route::resource('/pengajuan-surat', SubmissionController::class)->names('dashboard.submission')->except('edit');
-    Route::resource('/pengajuan', SubmissionStudentController::class)->names('dashboard.submission.student')->except('create', 'store', 'show');
+    Route::resource('/pengajuan', SubmissionStudentController::class)->names('dashboard.submission.student')->except('create', 'store', 'show', 'edit', 'update');
     Route::get('/pengajuan/{category}', [SubmissionStudentController::class, 'show'])->name('dashboard.submission.student.show');
+    Route::get('/pengajuan/{category}/detail/{submission}', [SubmissionStudentController::class, 'detail'])->name('dashboard.submission.student.detail');
+    Route::get('/pengajuan/{category}/edit/{submission}', [SubmissionStudentController::class, 'edit'])->name('dashboard.submission.student.edit');
+    Route::patch('/pengajuan/{category}/update/{submission}', [SubmissionStudentController::class, 'update'])->name('dashboard.submission.student.update');
     Route::get('/pengajuan/create/{category}', [SubmissionStudentController::class, 'create'])->name('dashboard.submission.student.create');
     Route::post('/pengajuan/create/{category}', [SubmissionStudentController::class, 'store'])->name('dashboard.submission.student.store');
 

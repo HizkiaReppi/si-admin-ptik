@@ -29,11 +29,11 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                @if ($submission->status !== 'done')
+                                @if ($submission->status !== 'submitted')
                                     <a class="dropdown-item"
-                                            href="{{ route('dashboard.submission.student.show', $submission->id) }}">
-                                            <i class="bx bxs-user-detail me-1"></i> Detail
-                                        </a>
+                                        href="{{ route('dashboard.submission.student.detail', [$category->slug, $submission->id]) }}">
+                                        <i class="bx bxs-user-detail me-1"></i> Detail
+                                    </a>
                                 @else
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
@@ -43,8 +43,12 @@
 
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item"
-                                            href="{{ route('dashboard.submission.student.show', $submission->id) }}">
+                                            href="{{ route('dashboard.submission.student.detail', [$category->slug, $submission->id]) }}">
                                             <i class="bx bxs-user-detail me-1"></i> Detail
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="{{ route('dashboard.submission.student.edit', [$category->slug, $submission->id]) }}">
+                                            <i class="bx bxs-user-detail me-1"></i> Edit
                                         </a>
                                         <a class="dropdown-item"
                                             href="{{ route('dashboard.submission.student.destroy', $submission->id) }}"

@@ -37,14 +37,6 @@ class SubmissionController extends Controller
     }
 
     /**
-     * Show the form for student for creating a new resource.
-     */
-    public function create_student(Category $category): View
-    {
-        return view('frontend.submissions.create', compact('category'));
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): RedirectResponse
@@ -68,10 +60,10 @@ class SubmissionController extends Controller
                 $category = Category::findOrFail($validatedData['category_id']);
                 $requirementName = $category->requirements[$index]->name;
                 $fileName = time() . '_' . str_replace(' ', '_', $category->name) . '_' . str_replace(' ', '_', $requirementName) . '.' . $file->getClientOriginalExtension();
-                $filePath = $file->storeAs('file/submissions', $fileName);
+                $filePath = $file->storeAs('public/file/submissions', $fileName);
 
                 $submission->files()->create([
-                    'file_path' => $filePath,
+                    'file_path' => Storage::url($filePath),
                 ]);
             }
 
@@ -85,40 +77,6 @@ class SubmissionController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage from student.
-     */
-    public function store_student(Request $request, Category $category): RedirectResponse
-    {
-        $validatedData = $request->validate([
-            'requirements' => ['required', 'array'],
-            'requirements.*' => ['required', 'file', 'mimes:pdf,doc,docx'],
-        ]);
-
-        DB::beginTransaction();
-
-        try {
-            $submission = new Submission();
-            $submission->category_id = $category->id;
-            $submission->student_id = auth()->student->id();
-            $submission->save();
-
-            foreach ($validatedData['requirements'] as $index => $file) {
-                $filePath = $file->store('requirements');
-                $submission->files()->create([
-                    'requirement_id' => $category->requirements[$index]->id,
-                    'file_path' => $filePath,
-                ]);
-            }
-
-            DB::commit();
-            return redirect()->route('frontend.submissions.index')->with('toast_success', 'Pengajuan surat berhasil diajukan');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->withInput()->with('toast_error', 'Gagal mengajukan surat. Silakan coba lagi.');
-        }
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(Submission $pengajuan_surat): View
@@ -126,7 +84,7 @@ class SubmissionController extends Controller
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
-        
+
         $submission = Submission::with(['category', 'student'])->find($pengajuan_surat->id);
         $statuses = [
             'submitted' => 'Diajukan',
