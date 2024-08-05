@@ -89,7 +89,6 @@ class LecturerController extends Controller
             return redirect()->route('dashboard.lecturer.index')->with('toast_success', 'Lecturer added successfully.');
         } catch (\Exception $e) {
             DB::rollback();
-            dd($e);
             return redirect()->back()->withInput()->with('error', 'Failed to add Lecturer. Please try again.');
         }
     }

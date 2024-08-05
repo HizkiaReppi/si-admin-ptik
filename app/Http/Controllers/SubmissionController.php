@@ -8,11 +8,19 @@ use App\Models\Submission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class SubmissionController extends Controller
 {
+    public function __construct()
+    {
+        if (!Gate::allows('admin')) {
+            abort(403);
+        }
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -71,7 +79,6 @@ class SubmissionController extends Controller
             return redirect()->route('dashboard.submission.index')->with('toast_success', 'Pengajuan surat berhasil diajukan');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->withInput()->with('toast_error', 'Failed to add submission. Please try again.');
         }
     }
@@ -120,7 +127,6 @@ class SubmissionController extends Controller
             return redirect()->route('dashboard.submission.index')->with('toast_success', 'Pengajuan surat berhasil diperbarui');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->withInput()->with('toast_error', 'Failed to update submission. Please try again.');
         }
     }

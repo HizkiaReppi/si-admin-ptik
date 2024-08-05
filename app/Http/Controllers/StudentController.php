@@ -91,7 +91,6 @@ class StudentController extends Controller
             return redirect()->route('dashboard.student.index')->with('toast_success', 'Student added successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->withInput()->with('toast_error', 'Failed to add Student. Please try again.');
         }
     }

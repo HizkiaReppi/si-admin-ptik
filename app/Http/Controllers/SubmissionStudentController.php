@@ -3,16 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Student;
 use App\Models\Submission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class SubmissionStudentController extends Controller
 {
+    public function __construct()
+    {
+        if (!Gate::allows('student')) {
+            abort(403);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -27,7 +34,7 @@ class SubmissionStudentController extends Controller
         $submissions = Submission::where('student_id', $student->id)
             ->with(['category'])
             ->get();
-        return view('dashboard.submission-student.index', compact('submissions', 'student'));
+        return view('dashboard.submission-student.index', compact('submissions'));
     }
 
     /**
@@ -89,7 +96,7 @@ class SubmissionStudentController extends Controller
         $submissions = Submission::where('student_id', $student->id)
             ->where('category_id', $category->id)
             ->get();
-        return view('dashboard.submission-student.show', compact('submissions', 'student', 'category'));
+        return view('dashboard.submission-student.show', compact('submissions', 'category'));
     }
 
     /**
@@ -101,11 +108,13 @@ class SubmissionStudentController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $student = auth()->user()->student;
+        $submission = Submission::with(['files', 'student'])->find($submission->id);
 
-        $submission = Submission::with(['files'])->find($submission->id);
+        if ($submission->student_id !== auth()->user()->student->id) {
+            abort(403);
+        }
 
-        return view('dashboard.submission-student.detail', compact('submission', 'student', 'category'));
+        return view('dashboard.submission-student.detail', compact('submission', 'category'));
     }
 
     /**
@@ -113,6 +122,10 @@ class SubmissionStudentController extends Controller
      */
     public function edit(Category $category, Submission $submission): View
     {
+        if ($submission->student_id !== auth()->user()->student->id) {
+            abort(403);
+        }
+
         $submission->load('files');
         $category->load('requirements');
         return view('dashboard.submission-student.edit', compact('submission', 'category'));
@@ -123,6 +136,10 @@ class SubmissionStudentController extends Controller
      */
     public function update(Request $request, Category $category, Submission $submission): RedirectResponse
     {
+        if ($submission->student_id !== auth()->user()->student->id) {
+            abort(403);
+        }
+
         $validatedData = $request->validate([
             'requirements' => ['array'],
             'requirements.*' => ['file', 'mimes:pdf,doc,docx'],
@@ -160,7 +177,6 @@ class SubmissionStudentController extends Controller
             return redirect()->route('dashboard.submission.student.index')->with('toast_success', 'Pengajuan surat berhasil diperbarui');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->withInput()->with('toast_error', 'Gagal memperbarui pengajuan surat. Silakan coba lagi.');
         }
     }
@@ -170,6 +186,10 @@ class SubmissionStudentController extends Controller
      */
     public function destroy(Submission $pengajuan): RedirectResponse
     {
+        if ($pengajuan->student_id !== auth()->user()->student->id) {
+            abort(403);
+        }
+
         DB::beginTransaction();
 
         try {
