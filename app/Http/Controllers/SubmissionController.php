@@ -19,7 +19,6 @@ class SubmissionController extends Controller
         if (!Gate::allows('admin')) {
             abort(403);
         }
-
     }
     /**
      * Display a listing of the resource.
@@ -142,13 +141,14 @@ class SubmissionController extends Controller
             $pengajuan_surat->delete();
 
             foreach ($pengajuan_surat->files as $file) {
-                if($file->file_path) {
-                    Storage::delete($file->file_path);
+                if ($file->file_path) {
+                    $fileStoragePath = str_replace('/storage', 'public', $file->file_path);
+                    Storage::delete($fileStoragePath);
                     $file->delete();
                 }
             }
 
-            if($pengajuan_surat->file_result) {
+            if ($pengajuan_surat->file_result) {
                 Storage::delete($pengajuan_surat->file_result);
             }
 
