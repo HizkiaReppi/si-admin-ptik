@@ -33,7 +33,7 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                @if ($submission->status !== 'done')
+                                @if (!in_array($submission->status, ['done', 'rejected', 'canceled', 'expired']))
                                     <a class="dropdown-item"
                                             href="{{ route('dashboard.submission.show', $submission->id) }}">
                                             <i class="bx bxs-user-detail me-1"></i> Detail

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SubmissionAdminUpdateRequest;
 use App\Models\Category;
 use App\Models\Student;
 use App\Models\Submission;
@@ -108,18 +109,28 @@ class SubmissionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Submission $pengajuan_surat): RedirectResponse
+    public function update(SubmissionAdminUpdateRequest $request, Submission $pengajuan_surat): RedirectResponse
     {
-        $validatedData = $request->validate([
-            'status' => ['required', 'in:submitted,pending,proses_kajur,proses_dekan,done,rejected,canceled,expired'],
-            'note' => ['nullable', 'string'],
-        ]);
+        $validatedData = $request->validated();
 
         DB::beginTransaction();
 
         try {
             $pengajuan_surat->status = $validatedData['status'];
             $pengajuan_surat->note = $validatedData['note'] ?? $pengajuan_surat->note;
+
+            if ($request->hasFile('file_result')) {
+                if ($pengajuan_surat->file_result) {
+                    $fileStoragePath = str_replace('/storage', 'public', $pengajuan_surat->file_result);
+                    Storage::delete($fileStoragePath);
+                }
+
+                $fileName = time() . '_' . str_replace(' ', '_', $pengajuan_surat->category->name) . '_' . str_replace(' ', '_', $pengajuan_surat->student->fullname) . '.' . $validatedData['file_result']->getClientOriginalExtension();
+                $filePath = $validatedData['file_result']->storeAs('public/file/submissions-result', $fileName);
+
+                $pengajuan_surat->file_result = Storage::url($filePath);
+            }
+
             $pengajuan_surat->save();
 
             DB::commit();
@@ -135,6 +146,10 @@ class SubmissionController extends Controller
      */
     public function destroy(Submission $pengajuan_surat): RedirectResponse
     {
+        if(!in_array($pengajuan_surat->status, ['done', 'rejected', 'canceled', 'expired'])) {
+            return redirect()->back()->with('toast_error', 'Gagal menghapus pengajuan surat. Status pengajuan surat tidak sesuai.');
+        }
+
         DB::beginTransaction();
 
         try {

@@ -14,7 +14,7 @@
                 <div class="mb-3 col-md-6">
                     <label for="status" class="form-label">Status Pengajuan</label>
                     <p class="border p-2 rounded m-0">
-                        <span class="badge text-bg-{{parseSubmissionBadgeClassNameStatus($submission->status)}}">
+                        <span class="badge text-bg-{{ parseSubmissionBadgeClassNameStatus($submission->status) }}">
                             {{ parseSubmissionStatus($submission->status) }}
                         </span>
                     </p>
@@ -22,13 +22,13 @@
                 <div class="mb-3 col-md-6">
                     <label for="category" class="form-label">Waktu Pengajuan</label>
                     <p class="border p-2 rounded m-0">
-                        {{ $submission->created_at . " (" . $submission->created_at->diffForHumans() . ")" }}
+                        {{ $submission->created_at . ' (' . $submission->created_at->diffForHumans() . ')' }}
                     </p>
                 </div>
                 <div class="mb-3 col-md-6">
                     <label for="category" class="form-label">Terakhir Diubah</label>
                     <p class="border p-2 rounded m-0">
-                        {{ $submission->updated_at . " (" . $submission->updated_at->diffForHumans() . ")" }}
+                        {{ $submission->updated_at . ' (' . $submission->updated_at->diffForHumans() . ')' }}
                     </p>
                 </div>
                 <div class="mb-3 col-md-12">
@@ -58,8 +58,7 @@
                     <div class="mb-3 col-6 col-md-4">
                         <label for="requirement_{{ $loop->index }}"
                             class="form-label">{{ $requirementName }}</label><br>
-                        <a href="{{ asset($file->file_path) }}" class="btn btn-secondary"
-                            download>Download</a>
+                        <a href="{{ asset($file->file_path) }}" class="btn btn-secondary" download>Download</a>
                     </div>
                 @endforeach
             </div>
@@ -143,9 +142,12 @@
         </div>
         <div class="d-flex gap-2 mb-4 ms-3" style="margin-top: -15px">
             <a href="{{ route('dashboard.submission.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
-            <a class="btn btn-danger" href="{{ route('dashboard.submission.destroy', $submission->id) }}" data-confirm-delete="true">
+            @if (in_array($submission->status, ['done', 'rejected', 'canceled', 'expired']))
+            <a class="btn btn-danger" href="{{ route('dashboard.submission.destroy', $submission->id) }}"
+                data-confirm-delete="true">
                 Hapus Pengajuan
             </a>
+            @endif
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                 Respon Pengajuan
             </button>
@@ -180,10 +182,21 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="note" id="noteLabel">Catatan <span id="noteOptional">(Opsional)</span></label>
+                            <label class="form-label" for="note" id="noteLabel">Catatan <span
+                                    id="noteOptional">(Opsional)</span></label>
                             <textarea class="form-control {{ $errors->get('note') ? 'border-danger' : '' }}" id="note" name="note"
                                 placeholder="Catatan" autocomplete="note">{{ old('note', $submission->note) }}</textarea>
                             <x-input-error class="mt-2" :messages="$errors->get('note')" />
+                        </div>
+
+                        <div class="mb-3" id="fileResultDiv">
+                            <label for="fileResult" class="form-label">File Hasil Surat (Opsional)</label>
+                            <input class="form-control" type="file" id="fileResult" name="file_result"
+                                accept=".pdf, .docx, .doc" />
+                            <x-input-error class="mt-2" :messages="$errors->get('file_result')" />
+                            <div id="form-help" class="form-text">
+                                <small>PDF, DOCX atau DOC (Max. 3 MB).</small>
+                            </div>
                         </div>
 
                         <div>
@@ -197,7 +210,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const statusSelect = document.getElementById('status');
             const noteTextarea = document.getElementById('note');
             const noteOptional = document.getElementById('noteOptional');
@@ -207,11 +220,17 @@
                 const requiredStatuses = ['pending', 'rejected', 'canceled', 'expired'];
 
                 if (requiredStatuses.includes(selectedStatus)) {
-                    noteTextarea.setAttribute('required', 'required');
+                    // noteTextarea.setAttribute('required', 'required');
                     noteOptional.style.display = 'none';
                 } else {
-                    noteTextarea.removeAttribute('required');
+                    // noteTextarea.removeAttribute('required');
                     noteOptional.style.display = 'inline';
+                }
+
+                if (selectedStatus === 'done') {
+                    document.getElementById('fileResultDiv').style.display = 'block';
+                } else {
+                    document.getElementById('fileResultDiv').style.display = 'none';
                 }
             }
 
