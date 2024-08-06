@@ -28,35 +28,42 @@
                             <td class="text-center">{{ $submission->category->name }}</td>
                             <td class="text-center">{{ $submission->created_at->diffForHumans() }}</td>
                             <td class="text-center">
-                                <span class="badge text-bg-{{parseSubmissionBadgeClassNameStatus($submission->status)}}">
+                                <span
+                                    class="badge text-bg-{{ parseSubmissionBadgeClassNameStatus($submission->status) }}">
                                     {{ parseSubmissionStatus($submission->status) }}
                                 </span>
                             </td>
                             <td class="text-center">
-                                @if (!in_array($submission->status, ['done', 'rejected', 'canceled', 'expired']))
+                                @php
+                                    $statuses = ['rejected', 'canceled', 'expired'];
+                                    $isStatusInArray = in_array($submission->status, $statuses);
+                                    $isStatusDoneAndOld =
+                                        $submission->status == 'done' && $submission->updated_at->lt(now()->subDays(7));
+                                @endphp
+                                @if ($isStatusInArray || $isStatusDoneAndOld)
                                     <a class="dropdown-item"
-                                            href="{{ route('dashboard.submission.show', $submission->id) }}">
-                                            <i class="bx bxs-user-detail me-1"></i> Detail
-                                        </a>
+                                        href="{{ route('dashboard.submission.show', $submission->id) }}">
+                                        <i class="bx bxs-user-detail me-1"></i> Detail
+                                    </a>
                                 @else
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                        data-bs-toggle="dropdown">
-                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                            data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
 
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item"
-                                            href="{{ route('dashboard.submission.show', $submission->id) }}">
-                                            <i class="bx bxs-user-detail me-1"></i> Detail
-                                        </a>
-                                        <a class="dropdown-item"
-                                            href="{{ route('dashboard.submission.destroy', $submission->id) }}"
-                                            data-confirm-delete="true">
-                                            <i class="bx bx-trash me-1"></i> Delete
-                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item"
+                                                href="{{ route('dashboard.submission.show', $submission->id) }}">
+                                                <i class="bx bxs-user-detail me-1"></i> Detail
+                                            </a>
+                                            <a class="dropdown-item"
+                                                href="{{ route('dashboard.submission.destroy', $submission->id) }}"
+                                                data-confirm-delete="true">
+                                                <i class="bx bx-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
                                 @endif
                             </td>
                         </tr>

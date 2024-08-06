@@ -153,7 +153,12 @@
         </div>
         <div class="d-flex gap-2 mb-4 ms-3" style="margin-top: -15px">
             <a href="{{ route('dashboard.submission.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
-            @if (in_array($submission->status, ['done', 'rejected', 'canceled', 'expired']))
+            @php
+                $statuses = ['rejected', 'canceled', 'expired'];
+                $isStatusInArray = in_array($submission->status, $statuses);
+                $isStatusDoneAndOld = $submission->status == 'done' && $submission->updated_at->lt(now()->subDays(7));
+            @endphp
+            @if ($isStatusInArray || $isStatusDoneAndOld)
                 <a class="btn btn-danger" href="{{ route('dashboard.submission.destroy', $submission->id) }}"
                     data-confirm-delete="true">
                     Hapus Pengajuan
@@ -163,6 +168,7 @@
                 Respon Pengajuan
             </button>
         </div>
+
     </div>
 
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

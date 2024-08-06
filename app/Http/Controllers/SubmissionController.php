@@ -146,7 +146,10 @@ class SubmissionController extends Controller
      */
     public function destroy(Submission $pengajuan_surat): RedirectResponse
     {
-        if(!in_array($pengajuan_surat->status, ['done', 'rejected', 'canceled', 'expired'])) {
+        $isStatusValid = in_array($pengajuan_surat->status, ['rejected', 'canceled', 'expired']);
+        $isStatusDoneAndOld = $pengajuan_surat->status == 'done' && $pengajuan_surat->updated_at->lt(now()->subDays(7));
+
+        if(!$isStatusValid && !$isStatusDoneAndOld) {
             return redirect()->back()->with('toast_error', 'Gagal menghapus pengajuan surat. Status pengajuan surat tidak sesuai.');
         }
 
