@@ -31,7 +31,7 @@
             <!-- Layout container -->
             <div class="layout-page">
                 <!-- Navbar -->
-                @include('components.navbar')
+                <x-navbar />
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->

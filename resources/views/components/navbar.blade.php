@@ -8,13 +8,40 @@
 
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
         <ul class="navbar-nav flex-row align-items-center ms-auto">
+            {{-- Notif --}}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle hide-arrow position-relative" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <i class="fa fa-bell"></i>
+                    @if ($submissionsCount > 0)
+                        <span class="translate-middle badge rounded-pill bg-danger" style="position:absolute;top:10px;right:-10px;font-size:9.5px;">
+                            {{ $submissionsCount }}
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
+                    @endif
+
+                </a>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownNotif">
+                    <h5 class="dropdown-header">Notifikasi</h6>
+                        @forelse($submissions as $submission)
+                            <a class="dropdown-item {{ $loop->last ? '' : 'border-bottom' }}" style="font-size: 14px"
+                                href="{{ route('dashboard.submission.show', $submission->id) }}">
+                                {{ $submission->student->fullname . ' ingin mengajukan ' . $submission->category->name }}
+                                <small class="text-muted"
+                                    style="font-size: 10px">({{ $submission->created_at->diffForHumans() }})</small>
+                            </a>
+                        @empty
+                            <a class="dropdown-item text-center" href="#">Tidak ada notifikasi</a>
+                        @endforelse
+                </div>
+            </li>
+
             <!-- User -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
                         @if (Auth::user()->photo)
-                            <img src="{{ Auth::user()->photoFile }}"
-                                class="w-px-40 h-auto rounded-circle" alt="{{ Auth::user()->name }}" />
+                            <img src="{{ Auth::user()->photoFile }}" class="w-px-40 h-auto rounded-circle"
+                                alt="{{ Auth::user()->name }}" />
                         @else
                             <img src="https://eu.ui-avatars.com/api/?name={{ Auth::user()->name }}&size=250"
                                 class="w-px-40 h-auto rounded-circle" alt="{{ Auth::user()->name }}" />
