@@ -36,31 +36,42 @@
                     <p class="border p-2 rounded m-0">{{ $submission->note ?? '-' }}</p>
                 </div>
 
-                {{-- Tampilkan Persyaratan Yang Telah diisi user --}}
-                @foreach ($submission->files as $file)
-                    @php
-                        $fileParts = explode('_', basename($file->file_path));
-                        $categoryNameParts = explode(' ', $submission->category->name);
-                        $requirementName = '';
+                <div class="mt-2">
+                    <h6 class="form-label">File Persyaratan Yang Diunggah</h6>
+                    <div class="border p-2 rounded m-0 row">
+                        @foreach ($submission->files as $file)
+                            @php
+                                $fileParts = explode('_', basename($file->file_path));
+                                $categoryNameParts = explode(' ', $submission->category->name);
+                                $requirementName = '';
 
-                        foreach ($fileParts as $index => $part) {
-                            if (in_array($part, $categoryNameParts)) {
-                                $requirementName = implode(
-                                    ' ',
-                                    array_slice($fileParts, $index + count($categoryNameParts)),
-                                );
-                                break;
-                            }
-                        }
+                                foreach ($fileParts as $index => $part) {
+                                    if (in_array($part, $categoryNameParts)) {
+                                        $requirementName = implode(
+                                            ' ',
+                                            array_slice($fileParts, $index + count($categoryNameParts)),
+                                        );
+                                        break;
+                                    }
+                                }
 
-                        $requirementName = str_replace(['.pdf', '.docx', '.doc'], '', $requirementName);
-                    @endphp
-                    <div class="mb-3 col-6 col-md-4">
-                        <label for="requirement_{{ $loop->index }}"
-                            class="form-label">{{ $requirementName }}</label><br>
-                        <a href="{{ asset($file->file_path) }}" class="btn btn-secondary" download>Download</a>
+                                $requirementName = str_replace(['.pdf', '.docx', '.doc'], '', $requirementName);
+                            @endphp
+                            <div class="mb-3 col-6 col-md-4">
+                                <label for="requirement_{{ $loop->index }}"
+                                    class="form-label">{{ $requirementName }}</label><br>
+                                <a href="{{ asset($file->file_path) }}" class="btn btn-secondary" download>Download</a>
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
+                </div>
+
+                @if ($submission->status === 'done' && $submission->file_result)
+                    <div class="mt-3 col-md-12">
+                        <label for="fileResult" class="form-label">File Hasil Surat</label><br />
+                        <a href="{{ asset($submission->file_result) }}" class="btn btn-success" download>Download</a>
+                    </div>
+                @endif
             </div>
         </div>
         <hr>
@@ -143,10 +154,10 @@
         <div class="d-flex gap-2 mb-4 ms-3" style="margin-top: -15px">
             <a href="{{ route('dashboard.submission.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
             @if (in_array($submission->status, ['done', 'rejected', 'canceled', 'expired']))
-            <a class="btn btn-danger" href="{{ route('dashboard.submission.destroy', $submission->id) }}"
-                data-confirm-delete="true">
-                Hapus Pengajuan
-            </a>
+                <a class="btn btn-danger" href="{{ route('dashboard.submission.destroy', $submission->id) }}"
+                    data-confirm-delete="true">
+                    Hapus Pengajuan
+                </a>
             @endif
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                 Respon Pengajuan
