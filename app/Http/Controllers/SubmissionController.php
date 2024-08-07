@@ -31,7 +31,7 @@ class SubmissionController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $submissions = Cache::remember('admin_submissions', now()->addMinutes(30), function () {
+        $submissions = Cache::remember('submissions', now()->addMinutes(30), function () {
             return Submission::with(['category', 'student'])->get();
         });
         return view('dashboard.submissions.index', compact('submissions'));
