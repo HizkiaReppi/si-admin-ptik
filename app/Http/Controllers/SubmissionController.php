@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Submission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -30,7 +31,9 @@ class SubmissionController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $submissions = Submission::with(['category', 'student'])->get();
+        $submissions = Cache::remember('admin_submissions', now()->addMinutes(30), function () {
+            return Submission::with(['category', 'student'])->get();
+        });
         return view('dashboard.submissions.index', compact('submissions'));
     }
 
@@ -39,8 +42,13 @@ class SubmissionController extends Controller
      */
     public function create(): View
     {
-        $students = Student::with('user')->get();
-        $categories = Category::with('requirements')->get();
+        $students = Cache::remember('students_submission', now()->addMinutes(60), function () {
+            return Student::with('user')->get();
+        });
+
+        $categories = Cache::remember('categories_submission', now()->addMinutes(60), function () {
+            return Category::with('requirements')->get();
+        });
         return view('dashboard.submissions.create', compact('students', 'categories'));
     }
 
@@ -92,7 +100,9 @@ class SubmissionController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $submission = Submission::with(['category', 'student'])->find($pengajuan_surat->id);
+        $submission = Cache::remember('admin_submission_' . $pengajuan_surat->id, now()->addMinutes(10), function () use ($pengajuan_surat) {
+            return Submission::with(['category', 'student'])->find($pengajuan_surat->id);
+        });
         $statuses = [
             'submitted' => 'Diajukan',
             'pending' => 'Wajib Menghadap',
@@ -149,7 +159,7 @@ class SubmissionController extends Controller
         $isStatusValid = in_array($pengajuan_surat->status, ['rejected', 'canceled', 'expired']);
         $isStatusDoneAndOld = $pengajuan_surat->status == 'done' && $pengajuan_surat->updated_at->lt(now()->subDays(7));
 
-        if(!$isStatusValid && !$isStatusDoneAndOld) {
+        if (!$isStatusValid && !$isStatusDoneAndOld) {
             return redirect()->back()->with('toast_error', 'Gagal menghapus pengajuan surat. Status pengajuan surat tidak sesuai.');
         }
 

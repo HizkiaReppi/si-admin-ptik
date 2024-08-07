@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
+use App\Models\Submission;
 use App\Models\User;
+use App\Observers\CategoryObserver;
+use App\Observers\SubmissionObserver;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -22,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Category::observe(CategoryObserver::class);
+        Submission::observe(SubmissionObserver::class);
+        
         Gate::define('admin', function (User $user) {
             return $user->role === 'admin'
                 ? Response::allow()

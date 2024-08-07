@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -28,7 +29,9 @@ class CategoryController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $categories = Category::with(['requirements', 'submissions'])->get();
+        $categories = Cache::remember('categories', now()->addMinutes(60), function () {
+            return Category::with(['requirements', 'submissions'])->get();;
+        });
 
         return view('dashboard.category.index', compact('categories'));
     }
@@ -111,7 +114,7 @@ class CategoryController extends Controller
             'requirements.*.file' => ['sometimes', 'file', 'mimes:pdf,doc,docx'],
         ];
 
-        if($request->name != $kategori->name) {
+        if ($request->name != $kategori->name) {
             $rulesValidated['name'] = ['required', 'string', 'min:2', 'max:255', 'unique:categories'];
         }
 
@@ -122,7 +125,7 @@ class CategoryController extends Controller
         DB::beginTransaction();
 
         try {
-            if($request->name != $kategori->name) {
+            if ($request->name != $kategori->name) {
                 $kategori->name = $categoryName;
                 $kategori->slug = generateSlug($kategori, $categoryName);
                 $kategori->save();

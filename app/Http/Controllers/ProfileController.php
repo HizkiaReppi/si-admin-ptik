@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -25,18 +26,27 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        if ($request->user()->role == 'admin') {
-            $user = $request->user();
-        } else if ($request->user()->role == 'student') {
-            $user = Student::where('user_id', $request->user()->id)->with('user')->first();
-        } else if ($request->user()->role == 'lecturer') {
-            $user = Lecturer::where('user_id', $request->user()->id)->with('user')->first();
-        } else if ($request->user()->role == 'HoD') {
-            $user = HeadOfDepartment::where('user_id', $request->user()->id)->with('user')->first();
-        }
+        $role = $request->user()->role;
+        $userId = $request->user()->id;
+
+        $cacheKey = "profile_{$role}_{$userId}";
+
+        $user = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($role, $userId) {
+            if ($role == 'admin') {
+                return User::find($userId);
+            } else if ($role == 'student') {
+                return Student::where('user_id', $userId)->with('user')->first();
+            } else if ($role == 'lecturer') {
+                return Lecturer::where('user_id', $userId)->with('user')->first();
+            } else if ($role == 'HoD') {
+                return HeadOfDepartment::where('user_id', $userId)->with('user')->first();
+            }
+        });
+
 
         return view('profile.edit', compact('user'));
     }
+
 
     /**
      * Update the user's profile information.
@@ -50,6 +60,8 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+        $cacheKey = "profile_{$request->user()->role}_{$request->user()->id}";
+        Cache::forget($cacheKey);
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -66,6 +78,8 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+        $cacheKey = "profile_admin_{$request->user()->id}";
+        Cache::forget($cacheKey);
 
         return Redirect::route('profile.edit')->with('toast_success', 'Profil berhasil diupdate');
     }
@@ -153,6 +167,8 @@ class ProfileController extends Controller
             }
 
             DB::commit();
+            $cacheKey = "profile_lecturer_{$request->user()->id}";
+            Cache::forget($cacheKey);
 
             return Redirect::route('profile.edit')->with('toast_success', 'Profil berhasil diupdate');
         } catch (\Exception $e) {
@@ -217,6 +233,8 @@ class ProfileController extends Controller
             }
 
             DB::commit();
+            $cacheKey = "profile_student_{$request->user()->id}";
+            Cache::forget($cacheKey);
 
             return Redirect::route('profile.edit')->with('toast_success', 'Profil berhasil diupdate');
         } catch (\Exception $e) {
@@ -242,11 +260,16 @@ class ProfileController extends Controller
 
         Auth::logout();
 
+        $userId = $user->id;
+        $userRole = $user->role;
+
         $user->delete();
+        $cacheKey = "profile_{$userRole}_{$userId}";
+        Cache::forget($cacheKey);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return Redirect::to('/login');
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Lecturer;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
@@ -31,7 +32,9 @@ class HeadOfDepartmentController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $kajur = HeadOfDepartment::first();
+        $kajur = Cache::remember('kajur', now()->addMinutes(60), function () {
+            return HeadOfDepartment::first();;
+        });
         return view('dashboard.kajur.index', compact('kajur'));
     }
 

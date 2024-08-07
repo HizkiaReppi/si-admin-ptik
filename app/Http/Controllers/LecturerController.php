@@ -8,6 +8,7 @@ use App\Models\Lecturer;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
@@ -32,7 +33,9 @@ class LecturerController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $lecturers = Lecturer::with('user')->get();
+        $lecturers = Cache::remember('lecturers', now()->addMinutes(60), function () {
+            return Lecturer::with('user')->get();
+        });
         return view('dashboard.lecturer.index', compact('lecturers'));
     }
 
@@ -102,11 +105,12 @@ class LecturerController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        
-        $students = Student::where('lecturer_id_1', $dosen->id)
-        ->orWhere('lecturer_id_2', $dosen->id)
-        ->with('user')
-        ->get();
+        $students = Cache::remember('lecturer_' . $dosen->id, now()->addMinutes(60), function () use ($dosen) {
+            return Student::where('lecturer_id_1', $dosen->id)
+                ->orWhere('lecturer_id_2', $dosen->id)
+                ->with('user')
+                ->get();
+        });
 
         return view('dashboard.lecturer.show', compact('dosen', 'students'));
     }

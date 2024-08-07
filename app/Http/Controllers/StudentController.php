@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StudentStoreRequest;
 use App\Http\Requests\StudentUpdateRequest;
-use App\Models\Guidance;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\Lecturer;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
@@ -33,7 +33,9 @@ class StudentController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $students = Student::with('user', 'firstSupervisor', 'secondSupervisor', 'firstSupervisor.user', 'secondSupervisor.user')->get();
+        $students = Cache::remember('students', now()->addMinutes(60), function () {
+            return Student::with('user', 'firstSupervisor', 'secondSupervisor', 'firstSupervisor.user', 'secondSupervisor.user')->get();
+        });
         return view('dashboard.student.index', compact('students'));
     }
 
@@ -42,7 +44,9 @@ class StudentController extends Controller
      */
     public function create(): View
     {
-        $lecturers = Lecturer::all();
+        $lecturers = Cache::remember('lecturers_student', now()->addMinutes(60), function () {
+            return Lecturer::all();
+        });
         $concentrations = ['rpl', 'multimedia', 'tkj'];
         return view('dashboard.student.create', compact('lecturers', 'concentrations'));
     }

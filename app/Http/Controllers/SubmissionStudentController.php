@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class SubmissionStudentController extends Controller
@@ -31,10 +32,16 @@ class SubmissionStudentController extends Controller
 
         $student = auth()->user()->student;
 
-        $submissions = Submission::where('student_id', $student->id)
-            ->with(['category'])
-            ->get();
-        $categories = Category::all(['name', 'slug']);
+        $submissions = Cache::remember('submissions_student_' . $student->id, now()->addMinutes(30), function () use ($student) {
+            return Submission::where('student_id', $student->id)
+                ->with(['category'])
+                ->get();
+        });
+
+        $categories = Cache::remember('categories_submission', now()->addMinutes(60), function () {
+            return Category::all(['name', 'slug']);
+        });
+
         return view('dashboard.submission-student.index', compact('submissions', 'categories'));
     }
 
@@ -94,9 +101,12 @@ class SubmissionStudentController extends Controller
 
         $student = auth()->user()->student;
 
-        $submissions = Submission::where('student_id', $student->id)
-            ->where('category_id', $category->id)
-            ->get();
+        $submissions = Cache::remember('submissions_student_category_' . $student->id . '_' . $category->id, now()->addMinutes(30), function () use ($student, $category) {
+            return Submission::where('student_id', $student->id)
+                ->where('category_id', $category->id)
+                ->get();
+        });
+
         return view('dashboard.submission-student.show', compact('submissions', 'category'));
     }
 
@@ -105,15 +115,19 @@ class SubmissionStudentController extends Controller
      */
     public function detail(Category $category, Submission $submission): View
     {
+        if ($submission->student_id !== auth()->user()->student->id) {
+            abort(403);
+        }
+
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $submission = Submission::with(['files', 'student'])->find($submission->id);
+        $submissionId = $submission->id;
 
-        if ($submission->student_id !== auth()->user()->student->id) {
-            abort(403);
-        }
+        $submission = Cache::remember('submission_detail_' . $submissionId, now()->addMinutes(30), function () use ($submissionId) {
+            return Submission::with(['files', 'student'])->find($submissionId);
+        });
 
         return view('dashboard.submission-student.detail', compact('submission', 'category'));
     }
@@ -149,7 +163,6 @@ class SubmissionStudentController extends Controller
         DB::beginTransaction();
 
         try {
-            // Menghapus file lama jika ada file baru yang diupload
             foreach ($validatedData['requirements'] as $index => $file) {
                 $requirement = $category->requirements[$index];
                 $fileNamePattern = str_replace(' ', '_', $category->name) . '_' . str_replace(' ', '_', $requirement->name);
@@ -165,7 +178,6 @@ class SubmissionStudentController extends Controller
                     $existingFile->delete();
                 }
 
-                // Mengupload file baru
                 $fileName = time() . '_' . $fileNamePattern . '.' . $file->getClientOriginalExtension();
                 $filePath = $file->storeAs('public/file/submissions', $fileName);
 
