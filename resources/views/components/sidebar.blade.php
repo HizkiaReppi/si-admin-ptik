@@ -85,6 +85,12 @@
                     <div data-i18n="Kajur">Ketua Jurusan</div>
                 </a>
             </li>
+            <li class="menu-item {{ request()->routeIs('dashboard.administrator.*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.administrator.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons fa-solid fa-user-gear"></i>
+                    <div data-i18n="Admin">Administrator</div>
+                </a>
+            </li>
         @endcan
     </ul>
 </aside>

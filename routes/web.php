@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HeadOfDepartmentController;
@@ -25,6 +26,8 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/administrator', [AdminController::class, 'index'])->middleware('password.confirm')->name('dashboard.administrator.index');
+    Route::resource('/administrator', AdminController::class)->names('dashboard.administrator')->except('index');
     Route::resource('/dosen', LecturerController::class)->names('dashboard.lecturer');
     Route::resource('/mahasiswa', StudentController::class)->names('dashboard.student');
     Route::resource('/ketua-jurusan', HeadOfDepartmentController::class)->names('dashboard.kajur');
