@@ -11,7 +11,11 @@ class Navbar extends Component
 
     public function __construct()
     {
-        $this->submissions = Submission::where('status', 'submitted')->orderBy('created_at', 'desc')->take(5)->get();
+        if (auth()->user()->role == 'student') {
+            $this->submissions = Submission::where('student_id', auth()->user()->student->id)->where('status', '!=', 'submitted')->orderBy('created_at', 'desc')->with(['category', 'student'])->take(5)->get();
+        } else {
+            $this->submissions = Submission::where('status', 'submitted')->orderBy('created_at', 'desc')->with(['category', 'student'])->take(5)->get();
+        }
     }
 
     public function render()

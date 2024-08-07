@@ -23,12 +23,21 @@
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownNotif">
                     <h5 class="dropdown-header">Notifikasi</h6>
                         @forelse($submissions as $submission)
+                        @if(auth()->user()->role == 'student')
+                        <a class="dropdown-item {{ $loop->last ? '' : 'border-bottom' }}" style="font-size: 14px"
+                                href="{{ route('dashboard.submission.student.detail', [$submission->category->slug, $submission->id]) }}">
+                                {{ 'Admin mengubah status pengajuan ' . $submission->category->name . ' anda menjadi ' . parseSubmissionStatus($submission->status) }}
+                                <small class="text-muted"
+                                    style="font-size: 10px">({{ $submission->updated_at->diffForHumans() }})</small>
+                            </a>
+                        @else
                             <a class="dropdown-item {{ $loop->last ? '' : 'border-bottom' }}" style="font-size: 14px"
                                 href="{{ route('dashboard.submission.show', $submission->id) }}">
                                 {{ $submission->student->fullname . ' ingin mengajukan ' . $submission->category->name }}
                                 <small class="text-muted"
                                     style="font-size: 10px">({{ $submission->created_at->diffForHumans() }})</small>
                             </a>
+                            @endif
                         @empty
                             <a class="dropdown-item text-center" href="#">Tidak ada notifikasi</a>
                         @endforelse
@@ -36,7 +45,7 @@
             </li>
 
             <!-- User -->
-            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+            <li class="ms-2 nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
                         @if (Auth::user()->photo)
