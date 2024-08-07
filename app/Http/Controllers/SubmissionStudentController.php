@@ -34,7 +34,8 @@ class SubmissionStudentController extends Controller
         $submissions = Submission::where('student_id', $student->id)
             ->with(['category'])
             ->get();
-        return view('dashboard.submission-student.index', compact('submissions'));
+        $categories = Category::all(['name', 'slug']);
+        return view('dashboard.submission-student.index', compact('submissions', 'categories'));
     }
 
     /**

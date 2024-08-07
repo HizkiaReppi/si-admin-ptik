@@ -152,7 +152,7 @@
             </div>
         </div>
         <div class="d-flex gap-2 mb-4 ms-3" style="margin-top: -15px">
-            <a href="{{ route('dashboard.submission.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
+            <a href="{{ route('dashboard.submission.student.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
             @if ($submission->status == 'submitted')
                 <a class="btn btn-danger" href="{{ route('dashboard.submission.student.destroy', $submission->id) }}" data-confirm-delete="true">
                     Hapus Pengajuan

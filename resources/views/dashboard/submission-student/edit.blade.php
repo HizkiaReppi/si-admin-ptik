@@ -66,8 +66,8 @@
             </div>
 
             <div>
-                <button type="submit" class="btn btn-primary">Edit Pengajuan Surat</button>
                 <a href="{{ route('dashboard.submission.student.index') }}" class="btn btn-outline-secondary ms-2">Batal</a>
+                <button type="submit" class="btn btn-primary">Edit Pengajuan Surat</button>
             </div>
         </form>
     </div>
