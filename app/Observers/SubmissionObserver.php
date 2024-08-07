@@ -51,7 +51,7 @@ class SubmissionObserver
     {
         Cache::forget('submissions');
         Cache::forget('admin_submissions_count');
-        Cache::forget('admin_submissions');
+        Cache::forget('admin_submissions_done_count');
         Cache::forget('admin_submissions');
         Cache::forget('admin_submission_' . $submission->id);
         Cache::forget('student_submissions_' . $submission->student_id);

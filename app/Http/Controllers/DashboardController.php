@@ -30,7 +30,10 @@ class DashboardController extends Controller
         $totalSubmission = Cache::remember('admin_submissions_count', now()->addMinutes(10), function () {
             return Submission::count();
         });
+        $totalSubmissionDone = Cache::remember('admin_submissions_done_count', now()->addMinutes(10), function () {
+            return Submission::where('status', 'done')->count();
+        });
 
-        return view('dashboard.index', compact('totalStudents',  'totalLecturers', 'totalSubmission'));
+        return view('dashboard.index', compact('totalStudents',  'totalLecturers', 'totalSubmission', 'totalSubmissionDone'));
     }
 }
