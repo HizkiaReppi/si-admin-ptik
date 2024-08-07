@@ -33,7 +33,7 @@ class LecturerController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $lecturers = Cache::remember('lecturers', now()->addMinutes(60), function () {
+        $lecturers = Cache::rememberForever('lecturers', function () {
             return Lecturer::with('user')->get();
         });
         return view('dashboard.lecturer.index', compact('lecturers'));

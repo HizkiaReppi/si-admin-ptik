@@ -33,7 +33,7 @@ class StudentController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $students = Cache::remember('students', now()->addMinutes(60), function () {
+        $students = Cache::rememberForever('students', function () {
             return Student::with('user', 'firstSupervisor', 'secondSupervisor', 'firstSupervisor.user', 'secondSupervisor.user')->get();
         });
         return view('dashboard.student.index', compact('students'));
@@ -44,7 +44,7 @@ class StudentController extends Controller
      */
     public function create(): View
     {
-        $lecturers = Cache::remember('lecturers_student', now()->addMinutes(60), function () {
+        $lecturers = Cache::rememberForever('lecturers_student', function () {
             return Lecturer::all();
         });
         $concentrations = ['rpl', 'multimedia', 'tkj'];

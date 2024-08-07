@@ -32,7 +32,7 @@ class HeadOfDepartmentController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $kajur = Cache::remember('kajur', now()->addMinutes(60), function () {
+        $kajur = Cache::rememberForever('kajur', function () {
             return HeadOfDepartment::first();;
         });
         return view('dashboard.kajur.index', compact('kajur'));
@@ -43,7 +43,9 @@ class HeadOfDepartmentController extends Controller
      */
     public function create(): View
     {
-        $lecturers = Lecturer::with('user')->get();
+        $lecturers = Cache::rememberForever('lecturers', function () {
+            return Lecturer::with('user')->get();
+        });
         return view('dashboard.kajur.create', compact('lecturers'));
     }
 
