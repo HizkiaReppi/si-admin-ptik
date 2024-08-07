@@ -90,9 +90,10 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $kategori)
+    public function show(Category $kategori): View
     {
-        //
+        $submissions = $kategori->submissions()->with('student')->get();
+        return view('dashboard.category.show', compact('kategori', 'submissions'));
     }
 
     /**
