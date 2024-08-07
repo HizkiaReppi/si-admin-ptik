@@ -20,18 +20,18 @@
                     @endif
 
                 </a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownNotif">
+                <div class="dropdown-menu dropdown-menu-end notif-dropdown" aria-labelledby="navbarDropdownNotif">
                     <h5 class="dropdown-header">Notifikasi</h6>
                         @forelse($submissions as $submission)
                         @if(auth()->user()->role == 'student')
-                        <a class="dropdown-item {{ $loop->last ? '' : 'border-bottom' }}" style="font-size: 14px"
+                        <a class="dropdown-item inline-block {{ $loop->last ? '' : 'border-bottom' }}" style="font-size: 14px;white-space: normal;width:100%;"
                                 href="{{ route('dashboard.submission.student.detail', [$submission->category->slug, $submission->id]) }}">
                                 {{ 'Admin mengubah status pengajuan ' . $submission->category->name . ' anda menjadi ' . parseSubmissionStatus($submission->status) }}
                                 <small class="text-muted"
                                     style="font-size: 10px">({{ $submission->updated_at->diffForHumans() }})</small>
                             </a>
                         @else
-                            <a class="dropdown-item {{ $loop->last ? '' : 'border-bottom' }}" style="font-size: 14px"
+                            <a class="dropdown-item inline-block {{ $loop->last ? '' : 'border-bottom' }}" style="font-size: 14px;white-space: normal;width:100%;"
                                 href="{{ route('dashboard.submission.show', $submission->id) }}">
                                 {{ $submission->student->fullname . ' ingin mengajukan ' . $submission->category->name }}
                                 <small class="text-muted"
