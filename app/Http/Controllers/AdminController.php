@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminStoreRequest;
+use App\Http\Requests\AdminUpdateRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -83,20 +84,65 @@ class AdminController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(User $administrator): View
     {
-        if (!Gate::allows('super-admin')) {
+        if (!Gate::allows('super-admin') && auth()->user()->id != $administrator->id) {
             abort(403);
         }
+
+        return view('dashboard.administrator.edit', compact('administrator'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(AdminUpdateRequest $request, User $administrator)
     {
-        if (!Gate::allows('super-admin')) {
+        if (!Gate::allows('super-admin') && auth()->user()->id != $administrator->id) {
             abort(403);
+        }
+
+        $validatedData = $request->validated();
+
+        DB::beginTransaction();
+
+        try {
+            $administrator->name = $validatedData['fullname'];
+
+            if(isset($validatedData['username'])) {
+                $administrator->username = $validatedData['username'];
+            }
+
+            if(isset($validatedData['email'])) {
+                $administrator->email = $validatedData['email'];
+            }
+
+            if(isset($validatedData['password'])) {
+                $administrator->password = Hash::make($validatedData['password']);
+            }
+
+            if ($request->hasFile('foto')) {
+                $oldImagePath = 'public/images/profile-photo/' . $administrator->photo;
+                if (Storage::exists($oldImagePath)) {
+                    Storage::delete($oldImagePath);
+                }
+
+                $file = $request->file('foto');
+                $fileName = time() . '_admin_' . $administrator->username . '.' . $file->getClientOriginalExtension();
+
+                $file->storeAs('public/images/profile-photo', $fileName);
+
+                $administrator->photo = $fileName;
+            }
+
+            $administrator->save();
+
+            DB::commit();
+            return redirect()->route('dashboard.administrator.index')->with('toast_success', 'Administrator updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            return redirect()->back()->withInput()->with('toast_error', 'Failed to update Administrator. Please try again.');
         }
     }
 
@@ -107,6 +153,23 @@ class AdminController extends Controller
     {
         if (!Gate::allows('super-admin')) {
             abort(403);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $user->delete();
+            DB::commit();
+
+            $oldImagePath = 'public/images/profile-photo/' . $user->foto;
+            if (Storage::exists($oldImagePath)) {
+                Storage::delete($oldImagePath);
+            }
+
+            return redirect()->route('dashboard.administrator.index')->with('toast_success', 'Administrator deleted successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->with('toast_error', 'Failed to delete Administrator. Please try again.');
         }
     }
 }

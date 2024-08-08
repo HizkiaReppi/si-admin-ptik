@@ -24,7 +24,7 @@ class AdminStoreRequest extends FormRequest
     {
         $rules = [
             'fullname' => ['required', 'string', 'max:255', 'min:2', 'regex:/^[a-zA-Z\s]*$/'],
-            'username' => ['required', 'string', 'max:25', 'min:4', 'unique:' . User::class, 'regex:/^[a-zA-Z0-9]*$/'],
+            'username' => ['required', 'string', 'max:255', 'min:2', 'unique:' . User::class, 'regex:/^[a-zA-Z][a-zA-Z0-9]*$/'],
             'email' => ['required', 'string', 'email', 'max:255', 'min:4', 'unique:' . User::class],
             'password' => ['required', 'string', 'confirmed', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'],
             'foto' => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:2048'],
@@ -41,7 +41,7 @@ class AdminStoreRequest extends FormRequest
         return [
             'fullname.regex' => 'The name field must be alphabet.',
             'username.unique' => 'The username field must be unique.',
-            'username.regex' => 'The username field must be number.',
+            'username.regex' => 'The username field must be alphabet and number.',
             'password.regex' => 'The password field must be should be at least 8 characters, one uppercase, one lowercase, one number and one special character.',
             'email.unique' => 'The email field must be unique.',
             'email.regex' => 'The email field must be email.',
