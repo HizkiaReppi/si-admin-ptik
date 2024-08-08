@@ -18,10 +18,11 @@ class SubmissionController extends Controller
 {
     public function __construct()
     {
-        if (!Gate::allows('admin')) {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin')) {
             abort(403);
         }
     }
+
     /**
      * Display a listing of the resource.
      */

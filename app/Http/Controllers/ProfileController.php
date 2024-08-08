@@ -32,7 +32,7 @@ class ProfileController extends Controller
         $cacheKey = "profile_{$role}_{$userId}";
 
         $user = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($role, $userId) {
-            if ($role == 'admin') {
+            if ($role == 'admin' || $role == 'super-admin') {
                 return User::find($userId);
             } else if ($role == 'student') {
                 return Student::where('user_id', $userId)->with('user')->first();

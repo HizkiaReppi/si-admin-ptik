@@ -21,6 +21,15 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'id' => Str::uuid(),
+            'name' => env('SUPER_ADMIN_NAME'),
+            'username' => env('SUPER_ADMIN_USERNAME'),
+            'email' => env('SUPER_ADMIN_EMAIL'),
+            'role' => 'super-admin',
+            'password' => bcrypt(env('SUPER_ADMIN_PASSWORD')),
+        ]);
+
+        User::factory()->create([
+            'id' => Str::uuid(),
             'name' => 'Admin',
             'username' => 'admin',
             'email' => 'admin@gmail.com',
@@ -31,7 +40,7 @@ class DatabaseSeeder extends Seeder
     //     // Seeder untuk 10 data user dan dosen
     //     for ($i = 1; $i <= 5; $i++) {
     //         $gender = rand(1, 2);
-            
+
     //         $uuid = Str::uuid();
     //         $nip = generateNIP($i, $gender);
     //         $nidn = generateNIDN();

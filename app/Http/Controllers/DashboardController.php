@@ -17,7 +17,7 @@ class DashboardController extends Controller
      */
     public function index(): View|RedirectResponse
     {
-        if (!Gate::allows('admin')) {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin')) {
             abort(403);
         }
 

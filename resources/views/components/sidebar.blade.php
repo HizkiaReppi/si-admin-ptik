@@ -1,7 +1,7 @@
 @php
     $homeLink = null;
 
-    if (auth()->user()->role == 'admin') {
+    if (auth()->user()->role == 'admin' || auth()->user()->role == 'super-admin') {
         $homeLink = route('dashboard');
     } else if(auth()->user()->role == 'student') {
         $homeLink = route('dashboard.submission.student.index');
@@ -21,7 +21,7 @@
 
     <div class="menu-inner-shadow"></div>
     <ul class="menu-inner py-1">
-        @can('student')
+        @canany(['student'])
             <li class="menu-item active open">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons fa-solid fa-envelopes-bulk"></i>
@@ -42,7 +42,7 @@
                     @endforeach
                 </ul>
             </li>
-        @elsecan('admin')
+        @elsecanany(['admin', 'super-admin'])
             <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <a href="{{ route('dashboard') }}" class="menu-link">
                     <i class="menu-icon tf-icons fa-solid fa-chart-line"></i>
@@ -91,6 +91,6 @@
                     <div data-i18n="Admin">Administrator</div>
                 </a>
             </li>
-        @endcan
+        @endcanany
     </ul>
 </aside>

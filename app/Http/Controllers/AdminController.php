@@ -14,7 +14,7 @@ class AdminController extends Controller
 {
     public function __construct()
     {
-        if (!Gate::allows('admin')) {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin')) {
             abort(403);
         }
     }
@@ -85,7 +85,9 @@ class AdminController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        if (!Gate::allows('super-admin')) {
+            abort(403);
+        }
     }
 
     /**
@@ -93,7 +95,9 @@ class AdminController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        if (!Gate::allows('super-admin')) {
+            abort(403);
+        }
     }
 
     /**
@@ -101,6 +105,8 @@ class AdminController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        if (!Gate::allows('super-admin')) {
+            abort(403);
+        }
     }
 }

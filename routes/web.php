@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     if(!auth()->check()) {
         return view('auth.login');
-    } elseif (auth()->user()->role == 'admin'){
+    } elseif (auth()->user()->role == 'admin' || auth()->user()->role == 'super-admin'){
         return redirect()->route('dashboard');
     } elseif (auth()->user()->role == 'student'){
         return redirect()->route('dashboard.submission.student.index');
