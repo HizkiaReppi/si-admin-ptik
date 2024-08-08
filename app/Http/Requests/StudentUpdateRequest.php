@@ -24,6 +24,9 @@ class StudentUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isNIMExist = Student::where('nim', $this->nim)->exists();
+        $isEmailExist = User::where('email', $this->email)->exists();
+        
         $rules = [
             'fullname' => ['required', 'string', 'max:255', 'min:2', 'regex:/^[a-zA-Z\s]*$/'],
             'angkatan' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . (date('Y'))],
@@ -40,11 +43,11 @@ class StudentUpdateRequest extends FormRequest
             $rules['lecturer_id_2'] = ['nullable'];
         }
 
-        if($this->nim != $this->student->nim) {
+        if($this->nim && !$isNIMExist) {
             $rules['nim'] = ['required', 'string', 'max:10', 'min:4', 'unique:' . Student::class, 'regex:/^[0-9]*$/'];
         }
 
-        if($this->email != $this->student->user->email) {
+        if($this->email && !$isEmailExist) {
             $rules['email'] = ['required', 'string', 'email', 'max:255', 'min:4', 'unique:' . User::class];
         }
 
