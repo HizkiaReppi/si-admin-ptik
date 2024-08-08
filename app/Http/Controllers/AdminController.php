@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AdminStoreRequest;
 use App\Http\Requests\AdminUpdateRequest;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -40,7 +41,7 @@ class AdminController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(AdminStoreRequest $request, User $user)
+    public function store(AdminStoreRequest $request, User $user): RedirectResponse
     {
         $validatedData = $request->validated();
 
@@ -76,9 +77,9 @@ class AdminController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $administrator): View
     {
-        //
+        return view('dashboard.administrator.show', compact('administrator'));
     }
 
     /**
@@ -96,7 +97,7 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(AdminUpdateRequest $request, User $administrator)
+    public function update(AdminUpdateRequest $request, User $administrator): RedirectResponse
     {
         if (!Gate::allows('super-admin') && auth()->user()->id != $administrator->id) {
             abort(403);
@@ -149,7 +150,7 @@ class AdminController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user): RedirectResponse
     {
         if (!Gate::allows('super-admin')) {
             abort(403);
