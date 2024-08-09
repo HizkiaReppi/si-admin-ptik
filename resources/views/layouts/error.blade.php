@@ -30,7 +30,7 @@
     </div>
 
     {{-- @vite(['resources/vendor/js/bootstrap.js']) --}}
-    <script src="{{ $baseUrl }}/assets/js/app.js"></script>
+    <script src="{{ $baseUrl }}/assets/js/bootstrap.js"></script>
 </body>
 
 </html>

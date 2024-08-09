@@ -42,7 +42,7 @@
         <script src="{{ $baseUrl }}/assets/vendor/js/menu.js"></script>
         <script src="{{ $baseUrl }}/assets/vendor/libs/apex-charts/apexcharts.js"></script>
         <script src="{{ $baseUrl }}/assets/js/main.js"></script>
-        <script src="{{ $baseUrl }}/assets/js/app.js"></script>
+        <script src="{{ $baseUrl }}/assets/js/bootstrap.js"></script>
         <!-- Place this tag in your head or just before your close body tag. -->
         <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
