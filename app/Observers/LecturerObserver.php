@@ -12,7 +12,7 @@ class LecturerObserver
      */
     public function created(Lecturer $lecturer): void
     {
-        //
+        $this->clearCache($lecturer);
     }
 
     /**
@@ -20,7 +20,7 @@ class LecturerObserver
      */
     public function updated(Lecturer $lecturer): void
     {
-        //
+        $this->clearCache($lecturer);
     }
 
     /**
@@ -28,7 +28,7 @@ class LecturerObserver
      */
     public function deleted(Lecturer $lecturer): void
     {
-        //
+        $this->clearCache($lecturer);
     }
 
     /**
@@ -36,7 +36,7 @@ class LecturerObserver
      */
     public function restored(Lecturer $lecturer): void
     {
-        //
+        $this->clearCache($lecturer);
     }
 
     /**
@@ -44,7 +44,7 @@ class LecturerObserver
      */
     public function forceDeleted(Lecturer $lecturer): void
     {
-        //
+        $this->clearCache($lecturer);
     }
 
     private function clearCache(Lecturer $lecturer): void

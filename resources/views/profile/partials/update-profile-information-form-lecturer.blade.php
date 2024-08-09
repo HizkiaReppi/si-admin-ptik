@@ -74,7 +74,7 @@
                 <div class="mb-3">
                     <label for="foto" class="form-label">Foto</label>
                     @if ($user->user->photo)
-                        <img src="{{ $user->user->photoFile }}" alt="{{ $user->fullname }}"
+                        <img src="/{{ $user->user->photoFile }}" alt="{{ $user->fullname }}"
                             class="img-preview img-thumbnail rounded mb-2" style="width: 300px; height: auto;">
                     @else
                         <img class="img-preview img-thumbnail rounded" style="width: 300px; height: auto;">

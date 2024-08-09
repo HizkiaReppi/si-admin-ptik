@@ -63,8 +63,7 @@
                 <x-input-error class="mt-2" :messages="$errors->get('lecturer_id_1')" />
             </div>
             <div class="mb-3">
-                <label for="lecturer_id_2" class="form-label">Dosen Pembimbing II <span
-                        style="font-size:14px;color:red">*</span></label>
+                <label for="lecturer_id_2" class="form-label">Dosen Pembimbing II</label>
                 <x-select :options="$lecturers" key="fullname" placeholders="Pilih Dosen Pembimbing II" id="lecturer_id_2"
                     name="lecturer_id_2" :value="$mahasiswa->lecturer_id_2" required />
                 <x-input-error class="mt-2" :messages="$errors->get('lecturer_id_2')" />
@@ -86,7 +85,7 @@
             <div class="mb-3">
                 <label for="foto" class="form-label">Foto</label>
                 @if ($mahasiswa->user->photo)
-                    <img src="{{ $mahasiswa->user->photoFile }}" alt="{{ $mahasiswa->fullname }}"
+                    <img src="/{{ $mahasiswa->user->photoFile }}" alt="{{ $mahasiswa->fullname }}"
                         class="img-preview img-thumbnail rounded mb-2" style="width: 300px; height: auto;">
                 @else
                     <img class="img-preview img-thumbnail rounded" style="width: 300px; height: auto;">

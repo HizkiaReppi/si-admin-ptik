@@ -82,7 +82,7 @@
                 @if ($submission->student->user->photo == null)
                     <div class="border p-5 rounded" style="margin-bottom: -15px">Tidak Ada Foto</div>
                 @else
-                    <img src="{{ $submission->student->user->photoFile }}" alt="{{ $submission->student->fullname }}"
+                    <img src="/{{ $submission->student->user->photoFile }}" alt="{{ $submission->student->fullname }}"
                         class="d-block rounded" style="width: 250px" id="foto" />
                 @endif
             </div>
@@ -154,8 +154,8 @@
         <div class="d-flex gap-2 mb-4 ms-3" style="margin-top: -15px">
             <a href="{{ route('dashboard.submission.index') }}" class="btn btn-outline-secondary ms-2">Kembali</a>
             @php
-                $statuses = ['rejected', 'canceled', 'expired'];
-                $isStatusInArray = in_array($submission->status, $statuses);
+                $statusess = ['rejected', 'canceled', 'expired'];
+                $isStatusInArray = in_array($submission->status, $statusess);
                 $isStatusDoneAndOld = $submission->status == 'done' && $submission->updated_at->lt(now()->subDays(7));
             @endphp
             @if ($isStatusInArray || $isStatusDoneAndOld)

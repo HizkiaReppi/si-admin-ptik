@@ -11,6 +11,8 @@ class HeadOfDepartment extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'head_of_departements';
+
     /**
      * The attributes that are mass assignable.
      *

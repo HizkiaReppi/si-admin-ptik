@@ -64,7 +64,7 @@ class HeadOfDepartmentController extends Controller
             if ($existingKajur) {
                 $existingKajur->delete();
 
-                $existingUser = User::where('role', 'kajur')->first();
+                $existingUser = User::where('role', 'HoD')->first();
                 if ($existingUser) {
                     $existingUser->delete();
                 }
@@ -73,8 +73,8 @@ class HeadOfDepartmentController extends Controller
             $user = new User();
             $user->name = $validatedData['fullname'];
             $user->email = $validatedData['email'];
-            $user->username = $validatedData['nidn'];
-            $user->password = Hash::make('kajur' . $validatedData['nidn']);
+            $user->username = rand(1, 999) . "_" . $validatedData['nidn'];
+            $user->password = Hash::make('kajur_' . $validatedData['nidn']);
             $user->role = 'HoD';
 
             if ($request->hasFile('foto')) {
@@ -141,9 +141,9 @@ class HeadOfDepartmentController extends Controller
 
         try {
             if (isset($validatedData['nidn'])) {
-                $ketua_jurusan->user->username = $validatedData['nidn'];
+                $ketua_jurusan->user->username = rand(1, 999) . "_" . $validatedData['nidn'];
                 $ketua_jurusan->nidn = $validatedData['nidn'];
-                $ketua_jurusan->user->password = Hash::make('kajur' . $validatedData['nidn']);
+                $ketua_jurusan->user->password = Hash::make('kajur_' . $validatedData['nidn']);
             }
 
             if (isset($validatedData['nip'])) {

@@ -82,7 +82,7 @@
                 @if ($submission->student->user->photo == null)
                     <div class="border p-5 rounded" style="margin-bottom: -15px">Tidak Ada Foto</div>
                 @else
-                    <img src="{{ $submission->student->user->photoFile }}" alt="{{ $submission->student->fullname }}"
+                    <img src="/{{ $submission->student->user->photoFile }}" alt="{{ $submission->student->fullname }}"
                         class="d-block rounded" style="width: 250px" id="foto" />
                 @endif
             </div>

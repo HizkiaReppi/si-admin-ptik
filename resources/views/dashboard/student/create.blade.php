@@ -62,8 +62,7 @@
                 <x-input-error class="mt-2" :messages="$errors->get('lecturer_id_1')" />
             </div>
             <div class="mb-3">
-                <label for="lecturer_id_2" class="form-label">Dosen Pembimbing II <span
-                        style="font-size:14px;color:red">*</span></label>
+                <label for="lecturer_id_2" class="form-label">Dosen Pembimbing II</label>
                 <x-select :options="$lecturers" key="fullname" placeholders="Pilih Dosen Pembimbing II" id="lecturer_id_2"
                     name="lecturer_id_2" />
                 <x-input-error class="mt-2" :messages="$errors->get('lecturer_id_2')" />

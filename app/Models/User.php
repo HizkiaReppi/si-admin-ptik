@@ -80,6 +80,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getPhotoFileAttribute(): string
     {
-        return $this->photo ? asset('storage/images/profile-photo/' . $this->photo) : null;
+        return $this->photo ? 'storage/images/profile-photo/' . $this->photo : null;
     }
 }

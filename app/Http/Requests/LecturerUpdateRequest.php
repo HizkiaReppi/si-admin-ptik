@@ -23,9 +23,9 @@ class LecturerUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $isNIDNExist = User::where('nidn', $this->nidn)->exists();
+        $isNIDNExist = Lecturer::where('nidn', $this->nidn)->exists();
         $isEmailExist = User::where('email', $this->email)->exists();
-        $isNIPExist = User::where('nip', $this->nip)->exists();
+        $isNIPExist = Lecturer::where('nip', $this->nip)->exists();
 
         $rules = [
             'fullname' => ['required', 'string', 'max:255', 'min:2', 'regex:/^[a-zA-Z\s]*$/'],
@@ -38,7 +38,7 @@ class LecturerUpdateRequest extends FormRequest
         ];
 
         if($this->nidn && !$isNIDNExist) {
-            $rules['nidn'] = ['required', 'integer', 'digits:10', 'unique:' . Lecturer::class, 'regex:/^[0-9]*$/'];
+            $rules['nidn'] = ['required', 'string', 'min:10', 'max:10', 'unique:' . Lecturer::class, 'regex:/^[0-9]*$/'];
         }
 
         if($this->email && !$isEmailExist) {
@@ -46,7 +46,7 @@ class LecturerUpdateRequest extends FormRequest
         }
 
         if($this->nip && !$isNIPExist) {
-            $rules['nip'] = ['required', 'integer', 'digits:18','unique:' . Lecturer::class, 'regex:/^[0-9]*$/'];
+            $rules['nip'] = ['required', 'string', 'min:18', 'max:18', 'unique:' . Lecturer::class, 'regex:/^[0-9]*$/'];
         }
 
         return $rules;

@@ -11,7 +11,7 @@
                 @if ($dosen->user->photo == null)
                     <p class="border p-5 rounded" style="margin-bottom: -15px">Tidak Ada Foto</p>
                 @else
-                    <img src="{{ $dosen->user->photoFile }}"
+                    <img src="/{{ $dosen->user->photoFile }}"
                         alt="{{ $dosen->fullname }}" class="d-block rounded" style="width: 250px" id="foto" />
                 @endif
             </div>
