@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('head_of_departements', function (Blueprint $table) {
+        Schema::create('head_of_departments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('nip', 25)->unique();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('rank', 100)->nullable()->default(null);
             $table->string('type', 50)->nullable()->default(null);
             $table->string('phone_number', 20)->nullable()->default(null);
+            $table->enum('role', ['kajur', 'sekjur']);
             $table->timestamps();
         });
     }

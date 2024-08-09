@@ -30,7 +30,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('/administrator', AdminController::class)->names('dashboard.administrator')->except('index');
     Route::resource('/dosen', LecturerController::class)->names('dashboard.lecturer');
     Route::resource('/mahasiswa', StudentController::class)->names('dashboard.student');
-    Route::resource('/ketua-jurusan', HeadOfDepartmentController::class)->names('dashboard.kajur');
+    
+    Route::get('/pimpinan-jurusan/create/ketua-jurusan', [HeadOfDepartmentController::class, 'create'])->name('dashboard.pimpinan-jurusan.kajur.create');
+    Route::get('/pimpinan-jurusan/create/sekretaris-jurusan', [HeadOfDepartmentController::class, 'create'])->name('dashboard.pimpinan-jurusan.sekjur.create');
+    Route::resource('/pimpinan-jurusan', HeadOfDepartmentController::class)->names('dashboard.pimpinan-jurusan')->except('create');
+    
     Route::resource('/kategori', CategoryController::class)->names('dashboard.category');
     Route::resource('/pengajuan-surat', SubmissionController::class)->names('dashboard.submission')->except('edit');
     Route::resource('/pengajuan', SubmissionStudentController::class)->names('dashboard.submission.student')->except('create', 'store', 'show', 'edit', 'update');

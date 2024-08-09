@@ -79,10 +79,10 @@
                     <div data-i18n="Mahasiswa">Mahasiswa</div>
                 </a>
             </li>
-            <li class="menu-item {{ request()->routeIs('dashboard.kajur.*') ? 'active' : '' }}">
-                <a href="{{ route('dashboard.kajur.index') }}" class="menu-link">
+            <li class="menu-item {{ request()->routeIs('dashboard.pimpinan-jurusan.*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.pimpinan-jurusan.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons fa-solid fa-user-graduate"></i>
-                    <div data-i18n="Kajur">Ketua Jurusan</div>
+                    <div data-i18n="Kajur">Pimpinan Jurusan</div>
                 </a>
             </li>
             <li class="menu-item {{ request()->routeIs('dashboard.administrator.*') ? 'active' : '' }}">

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LecturerStoreRequest;
-use App\Http\Requests\LecturerUpdateRequest;
+use App\Http\Requests\HeadOfDepartmentStoreRequest;
+use App\Http\Requests\HeadOfDepartmentUpdateRequest;
 use App\Models\HeadOfDepartment;
 use App\Models\Lecturer;
 use App\Models\User;
@@ -32,10 +32,13 @@ class HeadOfDepartmentController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $kajur = Cache::rememberForever('kajur', function () {
-            return HeadOfDepartment::first();;
+        $headOfDepartments = Cache::rememberForever('headOfDepartment', function () {
+            return HeadOfDepartment::all();
         });
-        return view('dashboard.kajur.index', compact('kajur'));
+        $kajur = !empty($headOfDepartments->where('role', 'kajur')->first());
+        $sekjur = !empty($headOfDepartments->where('role', 'sekjur')->first());
+
+        return view('dashboard.pimpinan-jurusan.index', compact('headOfDepartments', 'kajur', 'sekjur'));
     }
 
     /**
@@ -46,27 +49,29 @@ class HeadOfDepartmentController extends Controller
         $lecturers = Cache::rememberForever('lecturers', function () {
             return Lecturer::with('user')->get();
         });
-        return view('dashboard.kajur.create', compact('lecturers'));
+        return view('dashboard.pimpinan-jurusan.create', compact('lecturers'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(LecturerStoreRequest $request): RedirectResponse
+    public function store(HeadOfDepartmentStoreRequest $request): RedirectResponse
     {
         $validatedData = $request->validated();
 
         DB::beginTransaction();
 
         try {
-            $existingKajur = HeadOfDepartment::first();
+            $existingHeadOfDepartment = HeadOfDepartment::where('role', $validatedData['role'])->first();
 
-            if ($existingKajur) {
-                $existingKajur->delete();
+            if ($existingHeadOfDepartment) {
+                $oldImagePath = 'public/images/profile-photo/' . $existingHeadOfDepartment->user->foto;
+            
+                $existingHeadOfDepartment->delete();
+                $existingHeadOfDepartment->user->delete();
 
-                $existingUser = User::where('role', 'HoD')->first();
-                if ($existingUser) {
-                    $existingUser->delete();
+                if (Storage::exists($oldImagePath)) {
+                    Storage::delete($oldImagePath);
                 }
             }
 
@@ -74,12 +79,12 @@ class HeadOfDepartmentController extends Controller
             $user->name = $validatedData['fullname'];
             $user->email = $validatedData['email'];
             $user->username = rand(1, 999) . "_" . $validatedData['nidn'];
-            $user->password = Hash::make('kajur_' . $validatedData['nidn']);
+            $user->password = Hash::make($validatedData['role'] . '_' . $validatedData['nidn']);
             $user->role = 'HoD';
 
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
-                $fileName = time() . '_kajur_' . $user->username . '.' . $file->getClientOriginalExtension();
+                $fileName = time() . '_pimpinan-jurusan_' . $user->username . '.' . $file->getClientOriginalExtension();
 
                 $file->storeAs('public/images/profile-photo', $fileName);
 
@@ -88,22 +93,23 @@ class HeadOfDepartmentController extends Controller
 
             $user->save();
 
-            $kajur = new HeadOfDepartment();
-            $kajur->user_id = $user->id;
-            $kajur->nip = $validatedData['nip'];
-            $kajur->nidn = $validatedData['nidn'];
-            $kajur->front_degree = $validatedData['gelar-depan'];
-            $kajur->back_degree = $validatedData['gelar-belakang'];
-            $kajur->position = $validatedData['jabatan'];
-            $kajur->rank = $validatedData['pangkat'];
-            $kajur->type = $validatedData['golongan'];
-            $kajur->phone_number = $validatedData['no-hp'];
+            $headOfDepartment = new HeadOfDepartment();
+            $headOfDepartment->user_id = $user->id;
+            $headOfDepartment->nip = $validatedData['nip'];
+            $headOfDepartment->nidn = $validatedData['nidn'];
+            $headOfDepartment->front_degree = $validatedData['gelar-depan'];
+            $headOfDepartment->back_degree = $validatedData['gelar-belakang'];
+            $headOfDepartment->position = $validatedData['jabatan'];
+            $headOfDepartment->rank = $validatedData['pangkat'];
+            $headOfDepartment->type = $validatedData['golongan'];
+            $headOfDepartment->phone_number = $validatedData['no-hp'];
+            $headOfDepartment->role = $validatedData['role'];
 
-            $kajur->save();
+            $headOfDepartment->save();
 
             DB::commit();
 
-            return redirect()->route('dashboard.kajur.index')->with('toast_success', 'Ketua Jurusan added successfully.');
+            return redirect()->route('dashboard.pimpinan-jurusan.index')->with('toast_success', 'Ketua Jurusan added successfully.');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->withInput()->with('error', 'Failed to add Ketua Jurusan. Please try again.');
@@ -113,27 +119,27 @@ class HeadOfDepartmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(HeadOfDepartment $ketua_jurusan): View
+    public function show(HeadOfDepartment $pimpinan_jurusan): View
     {
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        return view('dashboard.kajur.show', compact('ketua_jurusan'));
+        return view('dashboard.pimpinan-jurusan.show', compact('pimpinan_jurusan'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(HeadOfDepartment $ketua_jurusan): View
+    public function edit(HeadOfDepartment $pimpinan_jurusan): View
     {
-        return view('dashboard.kajur.edit', compact('ketua_jurusan'));
+        return view('dashboard.pimpinan-jurusan.edit', compact('pimpinan_jurusan'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(LecturerUpdateRequest $request, HeadOfDepartment $ketua_jurusan): RedirectResponse
+    public function update(HeadOfDepartmentUpdateRequest $request, HeadOfDepartment $pimpinan_jurusan): RedirectResponse
     {
         $validatedData = $request->validated();
 
@@ -141,45 +147,47 @@ class HeadOfDepartmentController extends Controller
 
         try {
             if (isset($validatedData['nidn'])) {
-                $ketua_jurusan->user->username = rand(1, 999) . "_" . $validatedData['nidn'];
-                $ketua_jurusan->nidn = $validatedData['nidn'];
-                $ketua_jurusan->user->password = Hash::make('kajur_' . $validatedData['nidn']);
+                $pimpinan_jurusan->user->username = rand(1, 999) . "_" . $validatedData['nidn'];
+                $pimpinan_jurusan->nidn = $validatedData['nidn'];
+                $pimpinan_jurusan->user->password = Hash::make($validatedData['role'] . '_' . $validatedData['nidn']);
             }
 
             if (isset($validatedData['nip'])) {
-                $ketua_jurusan->nip = $validatedData['nip'];
+                $pimpinan_jurusan->nip = $validatedData['nip'];
             }
 
             if (isset($validatedData['email'])) {
-                $ketua_jurusan->user->email = $validatedData['email'];
+                $pimpinan_jurusan->user->email = $validatedData['email'];
             }
 
-            $ketua_jurusan->front_degree = $validatedData['gelar-depan'];
-            $ketua_jurusan->back_degree = $validatedData['gelar-belakang'];
-            $ketua_jurusan->position = $validatedData['jabatan'];
-            $ketua_jurusan->rank = $validatedData['pangkat'];
-            $ketua_jurusan->type = $validatedData['golongan'];
-            $ketua_jurusan->phone_number = $validatedData['no-hp'];
+            $pimpinan_jurusan->front_degree = $validatedData['gelar-depan'];
+            $pimpinan_jurusan->back_degree = $validatedData['gelar-belakang'];
+            $pimpinan_jurusan->position = $validatedData['jabatan'];
+            $pimpinan_jurusan->rank = $validatedData['pangkat'];
+            $pimpinan_jurusan->type = $validatedData['golongan'];
+            $pimpinan_jurusan->phone_number = $validatedData['no-hp'];
 
             if ($request->hasFile('foto')) {
-                $oldImagePath = 'public/images/profile-photo/' . $ketua_jurusan->user->photo;
+                $oldImagePath = 'public/images/profile-photo/' . $pimpinan_jurusan->user->photo;
                 if (Storage::exists($oldImagePath)) {
                     Storage::delete($oldImagePath);
                 }
 
                 $file = $request->file('foto');
-                $fileName = time() . '_kajur_' . $ketua_jurusan->user->username . '.' . $file->getClientOriginalExtension();
+                $fileName = time() . '_pimpinan-jurusan_' . $pimpinan_jurusan->user->username . '.' . $file->getClientOriginalExtension();
 
                 $file->storeAs('public/images/profile-photo', $fileName);
 
-                $ketua_jurusan->user->photo = $fileName;
+                $pimpinan_jurusan->user->photo = $fileName;
             }
 
-            $ketua_jurusan->save();
+            $pimpinan_jurusan->user->name = $validatedData['fullname'];
+            $pimpinan_jurusan->user->save();
+            $pimpinan_jurusan->save();
 
             DB::commit();
 
-            return redirect()->route('dashboard.kajur.index')->with('toast_success', 'Ketua Jurusan updated successfully.');
+            return redirect()->route('dashboard.pimpinan-jurusan.index')->with('toast_success', 'Ketua Jurusan updated successfully.');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->withInput()->with('error', 'Failed to update Ketua Jurusan. Please try again.');
@@ -189,22 +197,22 @@ class HeadOfDepartmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(HeadOfDepartment $ketua_jurusan): RedirectResponse
+    public function destroy(HeadOfDepartment $pimpinan_jurusan): RedirectResponse
     {
         DB::beginTransaction();
 
         try {
-            $ketua_jurusan->delete();
-            $ketua_jurusan->user->delete();
+            $pimpinan_jurusan->delete();
+            $pimpinan_jurusan->user->delete();
 
             DB::commit();
 
-            $oldImagePath = 'public/images/profile-photo/' . $ketua_jurusan->user->foto;
+            $oldImagePath = 'public/images/profile-photo/' . $pimpinan_jurusan->user->foto;
             if (Storage::exists($oldImagePath)) {
                 Storage::delete($oldImagePath);
             }
 
-            return redirect()->route('dashboard.kajur.index')->with('toast_success', 'Ketua Jurusan deleted successfully.');
+            return redirect()->route('dashboard.pimpinan-jurusan.index')->with('toast_success', 'Ketua Jurusan deleted successfully.');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('error', 'Failed to delete Ketua Kurusan. Please try again.');

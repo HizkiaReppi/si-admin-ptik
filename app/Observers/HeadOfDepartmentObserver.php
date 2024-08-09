@@ -12,7 +12,7 @@ class HeadOfDepartmentObserver
      */
     public function created(HeadOfDepartment $headOfDepartment): void
     {
-        Cache::forget('kajur');
+        Cache::forget('headOfDepartment');
     }
 
     /**
@@ -20,7 +20,7 @@ class HeadOfDepartmentObserver
      */
     public function updated(HeadOfDepartment $headOfDepartment): void
     {
-        Cache::forget('kajur');
+        Cache::forget('headOfDepartment');
     }
 
     /**
@@ -28,7 +28,7 @@ class HeadOfDepartmentObserver
      */
     public function deleted(HeadOfDepartment $headOfDepartment): void
     {
-        Cache::forget('kajur');
+        Cache::forget('headOfDepartment');
     }
 
     /**
@@ -36,7 +36,7 @@ class HeadOfDepartmentObserver
      */
     public function restored(HeadOfDepartment $headOfDepartment): void
     {
-        Cache::forget('kajur');
+        Cache::forget('headOfDepartment');
     }
 
     /**
@@ -44,6 +44,6 @@ class HeadOfDepartmentObserver
      */
     public function forceDeleted(HeadOfDepartment $headOfDepartment): void
     {
-        Cache::forget('kajur');
+        Cache::forget('headOfDepartment');
     }
 }

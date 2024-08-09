@@ -11,8 +11,6 @@ class HeadOfDepartment extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'head_of_departements';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -43,7 +41,7 @@ class HeadOfDepartment extends Model
      */
     public function getFullnameAttribute(): string
     {
-        return $this->front_degree . ' ' . $this->user->name . ' ' . $this->back_degree;
+        return $this->front_degree . ' ' . $this->user->name . ', ' . $this->back_degree;
     }
 
     /**
