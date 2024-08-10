@@ -1,4 +1,7 @@
 {
+    "name": "admin-ptik",
+    "version": "1.0.0",
+    "author": "Hizkia Reppi",
     "private": true,
     "type": "module",
     "scripts": {

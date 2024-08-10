@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "adminptik/adminptik",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Admin PTIK Information System",
     "keywords": [
         "laravel",
         "framework"

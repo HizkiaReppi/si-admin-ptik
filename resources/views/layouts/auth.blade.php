@@ -16,7 +16,6 @@
 <head>
     <x-meta-data :title="$title" csrfToken="{{ csrf_token() }}" :baseurl="$baseUrl" />
 
-    {{-- @vite(['resources/vendor/fonts/boxicons.css', 'resources/css/demo.css', 'resources/vendor/css/core.css', 'resources/vendor/css/theme-default.css', 'resources/vendor/js/helpers.js', 'resources/js/config.js']) --}}
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css">
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/css/demo.css">
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/vendor/fonts/boxicons.css">
@@ -35,7 +34,6 @@
             </div>
         </div>
 
-        {{-- @vite(['resources/vendor/libs/jquery/jquery.js', 'resources/vendor/libs/popper/popper.js', 'resources/vendor/js/bootstrap.js', 'resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.js', 'resources/vendor/js/menu.js', 'resources/vendor/libs/apex-charts/apexcharts.js', 'resources/js/main.js']) --}}
         <script src="{{ $baseUrl }}/assets/vendor/libs/jquery/jquery.js"></script>
         <script src="{{ $baseUrl }}/assets/vendor/libs/popper/popper.js"></script>
         <script src="{{ $baseUrl }}/assets/vendor/js/bootstrap.js"></script>
