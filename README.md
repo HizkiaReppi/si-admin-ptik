@@ -3,18 +3,22 @@
 ## Fitur
 
 1. Mahasiswa
-    - Mengajukan permohonan pembuatan surat (Tahap Pengembangan)
-    - Melihat status permohonan surat (Tahap Pengembangan)
+    - Mengajukan permohonan pembuatan surat
+    - Melihat status permohonan surat
 2. Ketua Jurusan
     - Melihat aktivitas pengajuan surat (Tahap Pengembangan)
     - Menyetujui atau menolak pengajuan surat (Tahap Pengembangan)
 3. Admin
     - Manajemen Dosen
     - Manajemen Mahasiswa
-    - Manajemen Ketua Jurusan
+    - Manajemen Pimpinan Jurusan
     - Manajemen Kategori
-    - Manajemen Pengajuan Surat (Tahap Pengembangan)
-4. Lainnya
+    - Manajemen Pengajuan Surat
+    - Tambah Data Administrator
+4. Super Admin
+    - Semua Fitur Admin
+    - Manajemen Administrator
+5. Lainnya
     - Lupa & Reset Password
     - Edit Profile
 
