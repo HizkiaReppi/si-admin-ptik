@@ -2,14 +2,24 @@
     width: 100vw;
 }
 
+.verify-email-card {
+    width: 100vw;
+}
+
 @media (min-width: 768px) {
-    .notif-dropdown {
+    .notif-dropdown, .verify-email-card {
         width: 80vw;
+    }
+    .verify-email-card {
+        width: 60vw;
     }
 }
 
 @media (min-width: 992px) {
     .notif-dropdown {
         width: 60vw;
+    }
+    .verify-email-card {
+        width: 40vw;
     }
 }
