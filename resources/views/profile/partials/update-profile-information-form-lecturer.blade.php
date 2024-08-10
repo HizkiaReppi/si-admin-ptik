@@ -26,8 +26,14 @@
                 </div>
                 <div class="mb-3 col-md-6">
                     <label for="email" class="form-label">E-mail</label>
+                    @php
+                        $email = $user->user->email;
+                        if (strpos($email, 'ptik.') === 0) {
+                            $email = substr($email, 5);
+                        }
+                    @endphp
                     <input class="form-control" type="email" id="email" name="email"
-                        value="{{ old('email', $user->user->email) }}" placeholder="Email" required />
+                        value="{{ old('email', $email) }}" placeholder="Email" required />
 
                     @if ($user->user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !$user->user->hasVerifiedEmail())
                         <div>

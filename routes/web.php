@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     if(!auth()->check()) {
         return view('auth.login');
-    } elseif (auth()->user()->role == 'admin' || auth()->user()->role == 'super-admin'){
+    } elseif (auth()->user()->role == 'admin' || auth()->user()->role == 'super-admin' || auth()->user()->role == 'HoD'){
         return redirect()->route('dashboard');
     } elseif (auth()->user()->role == 'student'){
         return redirect()->route('dashboard.submission.student.index');
@@ -30,11 +30,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/administrator', AdminController::class)->names('dashboard.administrator')->except('index');
     Route::resource('/dosen', LecturerController::class)->names('dashboard.lecturer');
     Route::resource('/mahasiswa', StudentController::class)->names('dashboard.student');
-    
+
     Route::get('/pimpinan-jurusan/create/ketua-jurusan', [HeadOfDepartmentController::class, 'create'])->name('dashboard.pimpinan-jurusan.kajur.create');
     Route::get('/pimpinan-jurusan/create/sekretaris-jurusan', [HeadOfDepartmentController::class, 'create'])->name('dashboard.pimpinan-jurusan.sekjur.create');
     Route::resource('/pimpinan-jurusan', HeadOfDepartmentController::class)->names('dashboard.pimpinan-jurusan')->except('create');
-    
+
     Route::resource('/kategori', CategoryController::class)->names('dashboard.category');
     Route::resource('/pengajuan-surat', SubmissionController::class)->names('dashboard.submission')->except('edit');
     Route::resource('/pengajuan', SubmissionStudentController::class)->names('dashboard.submission.student')->except('create', 'store', 'show', 'edit', 'update');

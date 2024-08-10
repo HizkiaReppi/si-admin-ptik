@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -24,6 +26,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $inputPassword = $request->input('password');
+        $inputEmail = $request->input('email');
+
+        $hoDUser = User::where('email', 'like', 'ptik.'.$inputEmail)->first();
+
+        if ($hoDUser && Hash::check($inputPassword, $hoDUser->password)) {
+            $request->merge(['email' => 'ptik.' . $inputEmail]);
+        }
+
         $request->authenticate();
 
         $request->session()->regenerate();
@@ -34,7 +45,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('dashboard', absolute: false));
         } else if(Auth::user()->role == 'student'){
             return redirect()->intended(route('dashboard.submission.student.index', absolute: false));
-        } else if(Auth::user()->role == 'HoD'){ // TODO: FIX THIS LATER
+        } else if(Auth::user()->role == 'HoD'){
             return redirect()->intended(route('dashboard', absolute: false));
         } else {
             return redirect()->intended('/');

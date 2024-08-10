@@ -20,8 +20,15 @@ class PasswordController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
+        $password = $validated['password'];
+
+        if ($request->user()->role == 'HoD') {
+            $role = $request->user()->headOfDepartment->role;
+            $password = $role . "_" . $validated['password'];
+        }
+
         $request->user()->update([
-            'password' => Hash::make($validated['password']),
+            'password' => Hash::make($password),
         ]);
 
         return back()->with('toast_success', 'Password berhasil di updated');

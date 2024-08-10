@@ -5,19 +5,18 @@
 1. Mahasiswa
     - Mengajukan permohonan pembuatan surat
     - Melihat status permohonan surat
-2. Ketua Jurusan
-    - Melihat aktivitas pengajuan surat (Tahap Pengembangan)
-    - Menyetujui atau menolak pengajuan surat (Tahap Pengembangan)
-3. Admin
+2. Admin
     - Manajemen Dosen
     - Manajemen Mahasiswa
     - Manajemen Pimpinan Jurusan
     - Manajemen Kategori
     - Manajemen Pengajuan Surat
     - Tambah Data Administrator
-4. Super Admin
+3. Super Admin
     - Semua Fitur Admin
     - Manajemen Administrator
+4. Pimpinan Jurusan
+    - Semua Fitur Super Admin
 5. Lainnya
     - Lupa & Reset Password
     - Edit Profile
@@ -90,6 +89,6 @@ $ php artisan serve
 $ npm run dev
 ```
 
-11. Buka browser dan akses `http://localhost:8000`
+11. Buka browser dan akses `http://127.0.0.1:8000/`
 
 Create By Hizkia Reppi

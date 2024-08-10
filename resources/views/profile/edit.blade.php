@@ -7,7 +7,7 @@
         @include('profile.partials.update-profile-information-form-admin')
     @elseif($user->user->role == 'student')
         @include('profile.partials.update-profile-information-form-student')
-    @elseif($user->user->role == 'lecturer' || $user->role == 'HoD')
+    @elseif($user->user->role == 'lecturer' || $user->user->role == 'HoD')
         @include('profile.partials.update-profile-information-form-lecturer')
     @endif
 

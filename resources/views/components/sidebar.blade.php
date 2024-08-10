@@ -42,7 +42,7 @@
                     @endforeach
                 </ul>
             </li>
-        @elsecanany(['admin', 'super-admin'])
+        @elsecanany(['admin', 'super-admin', 'HoD'])
             <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <a href="{{ route('dashboard') }}" class="menu-link">
                     <i class="menu-icon tf-icons fa-solid fa-chart-line"></i>

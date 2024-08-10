@@ -20,7 +20,7 @@ class SubmissionController extends Controller
 {
     public function __construct()
     {
-        if (!Gate::allows('admin') && !Gate::allows('super-admin')) {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
             abort(403);
         }
     }
@@ -149,11 +149,10 @@ class SubmissionController extends Controller
             DB::commit();
 
             Mail::to($pengajuan_surat->student->user->email)->send(new SubmissionUpdated($pengajuan_surat));
-            
+
             return redirect()->route('dashboard.submission.index')->with('toast_success', 'Pengajuan surat berhasil diperbarui');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->withInput()->with('toast_error', 'Failed to update submission. Please try again.');
         }
     }

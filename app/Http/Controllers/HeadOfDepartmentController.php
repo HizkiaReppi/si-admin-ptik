@@ -19,7 +19,7 @@ class HeadOfDepartmentController extends Controller
 {
     public function __construct()
     {
-        if (!Gate::allows('admin') && !Gate::allows('super-admin')) {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
             abort(403);
         }
     }
@@ -66,7 +66,7 @@ class HeadOfDepartmentController extends Controller
 
             if ($existingHeadOfDepartment) {
                 $oldImagePath = 'public/images/profile-photo/' . $existingHeadOfDepartment->user->foto;
-            
+
                 $existingHeadOfDepartment->delete();
                 $existingHeadOfDepartment->user->delete();
 
