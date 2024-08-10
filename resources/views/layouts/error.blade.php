@@ -14,7 +14,7 @@
 @endphp
 
 <head>
-    <x-meta-data :title="$title" csrfToken="{{ csrf_token() }}" />
+    <x-meta-data :title="$title" csrfToken="{{ csrf_token() }}" :baseurl="$baseUrl"/>
 
     {{-- @vite(['resources/vendor/css/core.css', 'resources/vendor/css/theme-default.css', 'resources/vendor/css/pages/page-misc.css']) --}}
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/vendor/css/core.css">
