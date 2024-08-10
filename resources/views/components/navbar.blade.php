@@ -49,7 +49,7 @@
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
                         @if (Auth::user()->photo)
-                            <img src="/{{ Auth::user()->photoFile }}" class="w-px-40 h-auto rounded-circle"
+                            <img src="{{ asset(Auth::user()->photoFile) }}" class="w-px-40 h-auto rounded-circle"
                                 alt="{{ Auth::user()->name }}" />
                         @else
                             <img src="https://eu.ui-avatars.com/api/?name={{ Auth::user()->name }}&size=250"
@@ -65,7 +65,7 @@
                                     <div class="avatar avatar-online">
                                         <div class="avatar avatar-online">
                                             @if (Auth::user()->photo)
-                                                <img src="/{{ Auth::user()->photoFile }}"
+                                                <img src="{{ asset(Auth::user()->photoFile) }}"
                                                     class="w-px-40 h-auto rounded-circle"
                                                     alt="{{ Auth::user()->name }}" />
                                             @else

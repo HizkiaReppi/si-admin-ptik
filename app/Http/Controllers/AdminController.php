@@ -6,6 +6,7 @@ use App\Http\Requests\AdminStoreRequest;
 use App\Http\Requests\AdminUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -26,7 +27,9 @@ class AdminController extends Controller
      */
     public function index(): View
     {
-        $administrators = User::where('role', 'admin')->get();
+        $administrators = Cache::rememberForever('administrators', function () {
+            return User::where('role', 'admin')->get();
+        });
         return view('dashboard.administrator.index', compact('administrators'));
     }
 
