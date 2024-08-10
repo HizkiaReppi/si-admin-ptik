@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SubmissionAdminUpdateRequest;
+use App\Mail\SubmissionUpdated;
 use App\Models\Category;
 use App\Models\Student;
 use App\Models\Submission;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -145,9 +147,13 @@ class SubmissionController extends Controller
             $pengajuan_surat->save();
 
             DB::commit();
+
+            Mail::to($pengajuan_surat->student->user->email)->send(new SubmissionUpdated($pengajuan_surat));
+            
             return redirect()->route('dashboard.submission.index')->with('toast_success', 'Pengajuan surat berhasil diperbarui');
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e);
             return redirect()->back()->withInput()->with('toast_error', 'Failed to update submission. Please try again.');
         }
     }
