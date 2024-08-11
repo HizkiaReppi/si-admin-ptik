@@ -16,6 +16,7 @@
                         <th class="text-center">Nama</th>
                         <th class="text-center">Username</th>
                         <th class="text-center">Email</th>
+                        <th class="text-center">Terakhir Dilihat</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -26,6 +27,13 @@
                             <td class="text-center">{{ $administrator->name }}</td>
                             <td class="text-center">{{ $administrator->username }}</td>
                             <td class="text-center">{{ $administrator->email }}</td>
+                            <td class="text-center">
+                                @if ($administrator->isOnline())
+                                    <span class="badge text-bg-primary">Online</span>
+                                @else
+                                    <span class="badge text-bg-secondary">{{ $administrator->lastActivityAgo() }}</span>
+                                @endif
+                            </td>
                             <td class="text-center">
                                 @if (auth()->user()->role == 'super-admin')
                                     <div class="dropdown">

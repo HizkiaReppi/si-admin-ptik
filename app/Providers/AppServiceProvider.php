@@ -8,6 +8,7 @@ use App\Models\Lecturer;
 use App\Models\Student;
 use App\Models\Submission;
 use App\Models\User;
+use App\Observers\AdministratorObserver;
 use App\Observers\CategoryObserver;
 use App\Observers\HeadOfDepartmentObserver;
 use App\Observers\LecturerObserver;
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         Lecturer::observe(LecturerObserver::class);
         Student::observe(StudentObserver::class);
         HeadOfDepartment::observe(HeadOfDepartmentObserver::class);
+        User::observe(AdministratorObserver::class);
 
         Gate::define('super-admin', function (User $user) {
             return $user->role === 'super-admin'

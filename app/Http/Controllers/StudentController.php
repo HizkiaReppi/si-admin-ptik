@@ -34,7 +34,7 @@ class StudentController extends Controller
         confirmDelete($title, $text);
 
         $students = Cache::rememberForever('students', function () {
-            return Student::with('user', 'firstSupervisor', 'secondSupervisor', 'firstSupervisor.user', 'secondSupervisor.user')->get();
+            return Student::with('firstSupervisor', 'secondSupervisor', 'firstSupervisor.user', 'secondSupervisor.user')->get();
         });
         return view('dashboard.student.index', compact('students'));
     }
@@ -107,6 +107,8 @@ class StudentController extends Controller
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
+
+        $mahasiswa->load('user', 'firstSupervisor', 'secondSupervisor', 'firstSupervisor.user', 'secondSupervisor.user');
 
         return view('dashboard.student.show', compact('mahasiswa'));
     }

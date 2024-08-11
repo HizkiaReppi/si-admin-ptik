@@ -50,6 +50,16 @@
                     <label for="golongan" class="form-label">Golongan</label>
                     <p class="border p-2 rounded m-0">{{ $dosen->type ?? '-' }}</p>
                 </div>
+                <div class="mb-3 col-md-6">
+                    <label for="last-activity" class="form-label">Terakhir Dilihat</label>
+                    <p class="border p-2 rounded m-0">
+                        @if ($dosen->user->isOnline())
+                            <span class="badge text-bg-primary">Online</span>
+                        @else
+                            <span class="badge text-bg-secondary">{{ $dosen->user->lastActivityAgo() }}</span>
+                        @endif
+                    </p>
+                </div>
             </div>
             <hr>
             <div>

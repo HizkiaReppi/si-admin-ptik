@@ -54,8 +54,28 @@
                     <label for="no-hp" class="form-label">Nomor HP</label>
                     <p class="border p-2 rounded m-0">{{ $mahasiswa->phone_number ?? '-' }}</p>
                 </div>
+                <div class="mb-3 col-md-6">
+                    <label for="alamat" class="form-label">Status Verifikasi Email</label>
+                    <p class="border p-2 rounded m-0">
+                        @if ($mahasiswa->user->hasVerifiedEmail())
+                            <span class="badge text-bg-primary">Terverifikasi</span>
+                        @else
+                            <span class="badge text-bg-danger">Tidak Terverifikasi</span>
+                        @endif
+                    </p>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="last-activity" class="form-label">Terakhir Dilihat</label>
+                    <p class="border p-2 rounded m-0">
+                        @if ($mahasiswa->user->isOnline())
+                            <span class="badge text-bg-primary">Online</span>
+                        @else
+                            <span class="badge text-bg-secondary">{{ $mahasiswa->user->lastActivityAgo() }}</span>
+                        @endif
+                    </p>
+                </div>
                 <div class="mb-3 col-md-12">
-                    <label for="jabatan" class="form-label">Alamat</label>
+                    <label for="alamat" class="form-label">Alamat</label>
                     <p class="border p-2 rounded m-0">{{ $mahasiswa->address ?? '-' }}</p>
                 </div>
             </div>

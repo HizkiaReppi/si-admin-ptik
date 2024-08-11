@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -81,5 +82,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getPhotoFileAttribute(): string
     {
         return $this->photo ? 'storage/images/profile-photo/' . $this->photo : null;
+    }
+
+    /**
+     * Check if user is online.
+     */
+    public function isOnline(): Bool
+    {
+        return $this->last_activity >= now()->subMinutes();
+    }
+
+    /**
+     * Get user last activity.
+     */
+    public function lastActivityAgo(): String
+    {
+        return $this->last_activity !== null ? Carbon::parse($this->last_activity)->diffForHumans() : 'Tidak Pernah Login';
     }
 }

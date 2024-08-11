@@ -35,7 +35,7 @@ class SubmissionController extends Controller
         confirmDelete($title, $text);
 
         $submissions = Cache::remember('submissions', now()->addMinutes(30), function () {
-            return Submission::with(['category', 'student'])->get();
+            return Submission::with(['category', 'student', 'student.user'])->get();
         });
         return view('dashboard.submissions.index', compact('submissions'));
     }
@@ -104,7 +104,7 @@ class SubmissionController extends Controller
         confirmDelete($title, $text);
 
         $submission = Cache::remember('admin_submission_' . $pengajuan_surat->id, now()->addMinutes(10), function () use ($pengajuan_surat) {
-            return Submission::with(['category', 'student'])->find($pengajuan_surat->id);
+            return Submission::with(['files', 'category', 'student', 'student.user'])->find($pengajuan_surat->id);
         });
         $statuses = [
             'submitted' => 'Diajukan',

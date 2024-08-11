@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \RealRashid\SweetAlert\ToSweetAlert::class,
             \App\Http\Middleware\UnderMaintenance::class,
+            \App\Http\Middleware\UserActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
