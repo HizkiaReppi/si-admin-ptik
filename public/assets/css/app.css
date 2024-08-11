@@ -6,6 +6,10 @@
     width: 100vw;
 }
 
+trix-toolbar [data-trix-button-group="file-tools"] {
+    display: none !important;
+}
+
 @media (min-width: 768px) {
     .notif-dropdown, .verify-email-card {
         width: 80vw;

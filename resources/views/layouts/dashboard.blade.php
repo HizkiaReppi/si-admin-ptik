@@ -21,6 +21,8 @@
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css">
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/vendor/css/core.css">
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/vendor/css/theme-default.css">
+    <link rel="stylesheet" href="{{ $baseUrl }}/assets/vendor/libs/trix/trix.css">
+    <script src="{{ $baseUrl }}/assets/vendor/libs/trix/trix.umd.min.js"></script>
     <script src="{{ $baseUrl }}/assets/vendor/js/helpers.js"></script>
     <script src="{{ $baseUrl }}/assets/js/config.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
