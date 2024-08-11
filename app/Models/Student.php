@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Helpers\StudentHelper;
+use App\Helpers\TextFormattingHelper;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -79,7 +81,7 @@ class Student extends Model
      */
     public function getFormattedNIMAttribute(): string
     {
-        return formatNIM($this->nim);
+        return TextFormattingHelper::formatNIM($this->nim);
     }
 
     /**
@@ -87,6 +89,6 @@ class Student extends Model
      */
     public function getCurrentSemesterAttribute(): string
     {
-        return getCurrentSemesterStudent($this->batch);
+        return StudentHelper::getCurrentSemesterStudent($this->batch);
     }
 }

@@ -14,8 +14,8 @@
                 <div class="mb-3 col-md-6">
                     <label for="status" class="form-label">Status Pengajuan</label>
                     <p class="border p-2 rounded m-0">
-                        <span class="badge text-bg-{{ parseSubmissionBadgeClassNameStatus($submission->status) }}">
-                            {{ parseSubmissionStatus($submission->status) }}
+                        <span class="badge text-bg-{{ $submission->parseSubmissionBadgeClassNameStatus }}">
+                            {{ $submission->parseSubmissionStatus }}
                         </span>
                     </p>
                 </div>

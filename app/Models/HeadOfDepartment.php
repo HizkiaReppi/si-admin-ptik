@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\TextFormattingHelper;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,7 +50,7 @@ class HeadOfDepartment extends Model
      */
     public function getFormattedNIPAttribute(): string
     {
-        return formatNIP($this->nip);
+        return TextFormattingHelper::formatNIP($this->nip);
     }
 
     /**
@@ -57,6 +58,6 @@ class HeadOfDepartment extends Model
      */
     public function getFormattedNIDNAttribute(): string
     {
-        return formatNIDN($this->nidn);
+        return TextFormattingHelper::formatNIDN($this->nidn);
     }
 }

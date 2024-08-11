@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Lecturer;
 use App\Models\Student;
 use App\Models\User;
+use App\Helpers\GenerationHelper;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -42,8 +43,8 @@ class DatabaseSeeder extends Seeder
     //         $gender = rand(1, 2);
 
     //         $uuid = Str::uuid();
-    //         $nip = generateNIP($i, $gender);
-    //         $nidn = generateNIDN();
+    //         $nip = GenerationHelper::generateNIP($i, $gender);
+    //         $nidn = GenerationHelper::generateNIDN();
 
     //         $user = User::create([
     //             'id' => $uuid,
