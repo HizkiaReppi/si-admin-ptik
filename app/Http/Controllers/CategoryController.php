@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SlugHelper;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -61,7 +62,7 @@ class CategoryController extends Controller
         try {
             $category = new Category();
             $category->name = $validatedData['name'];
-            $category->slug = generateSlug($category, $validatedData['name']);
+            $category->slug = SlugHelper::generateSlug($category, $validatedData['name']);
             $category->save();
 
             if (isset($validatedData['requirements'])) {
@@ -128,7 +129,7 @@ class CategoryController extends Controller
         try {
             if ($request->name != $kategori->name) {
                 $kategori->name = $categoryName;
-                $kategori->slug = generateSlug($kategori, $categoryName);
+                $kategori->slug = SlugHelper::generateSlug($kategori, $categoryName);
                 $kategori->save();
             }
 

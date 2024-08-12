@@ -126,7 +126,7 @@ class SubmissionStudentController extends Controller
         $submissionId = $submission->id;
 
         $submission = Cache::remember('submission_detail_' . $submissionId, now()->addMinutes(30), function () use ($submissionId) {
-            return Submission::with(['files', 'student'])->find($submissionId);
+            return Submission::with(['files', 'student', 'student.user'])->find($submissionId);
         });
 
         return view('dashboard.submission-student.detail', compact('submission', 'category'));

@@ -14,8 +14,8 @@
                 <div class="mb-3 col-md-6">
                     <label for="status" class="form-label">Status Pengajuan</label>
                     <p class="border p-2 rounded m-0">
-                        <span class="badge text-bg-{{ parseSubmissionBadgeClassNameStatus($submission->status) }}">
-                            {{ parseSubmissionStatus($submission->status) }}
+                        <span class="badge text-bg-{{ $submission->parseSubmissionBadgeClassNameStatus }}">
+                            {{ $submission->parseSubmissionStatus }}
                         </span>
                     </p>
                 </div>
@@ -144,6 +144,26 @@
                 <div class="mb-3 col-md-6">
                     <label for="dosen-pembimbing-2" class="form-label">Dosen Pembimbing II</label>
                     <p class="border p-2 rounded m-0">{{ $submission->student->secondSupervisorFullname }}</p>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="alamat" class="form-label">Status Verifikasi Email</label>
+                    <p class="border p-2 rounded m-0">
+                        @if ($submission->student->user->hasVerifiedEmail())
+                            <span class="badge text-bg-primary">Terverifikasi</span>
+                        @else
+                            <span class="badge text-bg-danger">Tidak Terverifikasi</span>
+                        @endif
+                    </p>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="last-activity" class="form-label">Terakhir Dilihat</label>
+                    <p class="border p-2 rounded m-0">
+                        @if ($submission->student->user->isOnline())
+                            <span class="badge text-bg-primary">Online</span>
+                        @else
+                            <span class="badge text-bg-secondary">{{ $submission->student->user->lastActivityAgo() }}</span>
+                        @endif
+                    </p>
                 </div>
                 <div class="mb-3 col-md-12">
                     <label for="jabatan" class="form-label">Alamat</label>

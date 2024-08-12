@@ -29,8 +29,8 @@
                             <td class="text-center">{{ $submission->created_at->diffForHumans() }}</td>
                             <td class="text-center">
                                 <span
-                                    class="badge text-bg-{{ parseSubmissionBadgeClassNameStatus($submission->status) }}">
-                                    {{ parseSubmissionStatus($submission->status) }}
+                                    class="badge text-bg-{{ $submission->parseSubmissionBadgeClassNameStatus }}">
+                                    {{ $submission->parseSubmissionStatus }}
                                 </span>
                             </td>
                             <td class="text-center">

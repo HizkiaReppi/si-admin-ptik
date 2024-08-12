@@ -27,6 +27,10 @@ class AdminController extends Controller
      */
     public function index(): View
     {
+        $title = 'Apakah anda yakin?';
+        $text = 'Anda tidak akan bisa mengembalikannya!';
+        confirmDelete($title, $text);
+
         $administrators = Cache::rememberForever('administrators', function () {
             return User::where('role', 'admin')->get();
         });
@@ -82,6 +86,10 @@ class AdminController extends Controller
      */
     public function show(User $administrator): View
     {
+        $title = 'Apakah anda yakin?';
+        $text = 'Anda tidak akan bisa mengembalikannya!';
+        confirmDelete($title, $text);
+
         return view('dashboard.administrator.show', compact('administrator'));
     }
 
@@ -145,7 +153,6 @@ class AdminController extends Controller
             return redirect()->route('dashboard.administrator.index')->with('toast_success', 'Administrator updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->withInput()->with('toast_error', 'Failed to update Administrator. Please try again.');
         }
     }

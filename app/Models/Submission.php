@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\SubmissionHelper;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,16 @@ class Submission extends Model
      * @var string[]
      */
     protected $fillable = ['category_id', 'user_id', 'status', 'note', 'file_result'];
+
+    public function getParseSubmissionStatusAttribute(): string
+    {
+        return SubmissionHelper::parseSubmissionStatus($this->status);
+    }
+
+    public function getParseSubmissionBadgeClassNameStatusAttribute(): string
+    {
+        return SubmissionHelper::parseSubmissionBadgeClassNameStatus($this->status);
+    }
 
     public function files(): HasMany
     {

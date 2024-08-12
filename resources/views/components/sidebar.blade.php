@@ -22,7 +22,7 @@
     <div class="menu-inner-shadow"></div>
     <ul class="menu-inner py-1">
         @canany(['student'])
-            <li class="menu-item active open">
+            <li class="menu-item {{ request()->routeIs('dashboard.submission.*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons fa-solid fa-envelopes-bulk"></i>
                     <div data-i18n="Bimbingan">Pengajuan Surat</div>
@@ -34,7 +34,7 @@
                         </a>
                     </li>
                     @foreach ($categories as $category)
-                        <li class="menu-item {{ request()->routeIs('dashboard.submission.student.show') ? 'active' : '' }}">
+                        <li class="menu-item {{ request()->is('pengajuan/'. $category->slug) ? 'active' : '' }}">
                             <a href="{{ route('dashboard.submission.student.show', $category->slug) }}" class="menu-link">
                                 <div data-i18n="{{ $category->name }}">{{ $category->name }}</div>
                             </a>
@@ -42,11 +42,23 @@
                     @endforeach
                 </ul>
             </li>
+            <li class="menu-item {{ request()->routeIs('dashboard.announcements.*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.announcements.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons fa-solid fa-bullhorn"></i>
+                    <div data-i18n="Pengumuman">Pengumuman</div>
+                </a>
+            </li>
         @elsecanany(['admin', 'super-admin', 'HoD'])
             <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <a href="{{ route('dashboard') }}" class="menu-link">
                     <i class="menu-icon tf-icons fa-solid fa-chart-line"></i>
-                    <div data-i18n="Bimbingan">Dashboard</div>
+                    <div data-i18n="Dashboard">Dashboard</div>
+                </a>
+            </li>
+            <li class="menu-item {{ request()->routeIs('dashboard.announcements.*') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.announcements.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons fa-solid fa-bullhorn"></i>
+                    <div data-i18n="Pengumuman">Pengumuman</div>
                 </a>
             </li>
             <li class="menu-header small text-uppercase">

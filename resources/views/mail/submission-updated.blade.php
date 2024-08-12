@@ -109,7 +109,7 @@
             menjadi:</p>
         <div>
             <span class="badge" style="background-color: {{ $badgeColor }}; color: {{ $badgeTextColor }};">
-                {{ parseSubmissionStatus($submission->status) }}
+                {{ $submission->parseSubmissionStatus }}
             </span>
         </div>
         @php

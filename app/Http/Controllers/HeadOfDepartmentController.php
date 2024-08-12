@@ -33,7 +33,7 @@ class HeadOfDepartmentController extends Controller
         confirmDelete($title, $text);
 
         $headOfDepartments = Cache::rememberForever('headOfDepartment', function () {
-            return HeadOfDepartment::all();
+            return HeadOfDepartment::with('user')->get();
         });
         $kajur = !empty($headOfDepartments->where('role', 'kajur')->first());
         $sekjur = !empty($headOfDepartments->where('role', 'sekjur')->first());
@@ -125,6 +125,8 @@ class HeadOfDepartmentController extends Controller
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
+
+        $pimpinan_jurusan->load('user');
 
         return view('dashboard.pimpinan-jurusan.show', compact('pimpinan_jurusan'));
     }

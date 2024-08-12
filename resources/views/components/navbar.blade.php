@@ -26,7 +26,7 @@
                         @if(auth()->user()->role == 'student')
                         <a class="dropdown-item inline-block {{ $loop->last ? '' : 'border-bottom' }}" style="font-size: 14px;white-space: normal;width:100%;"
                                 href="{{ route('dashboard.submission.student.detail', [$submission->category->slug, $submission->id]) }}">
-                                {{ 'Admin mengubah status pengajuan ' . $submission->category->name . ' anda menjadi ' . parseSubmissionStatus($submission->status) }}
+                                {{ 'Admin mengubah status pengajuan ' . $submission->category->name . ' anda menjadi ' . $submission->parseSubmissionStatus }}
                                 <small class="text-muted"
                                     style="font-size: 10px">({{ $submission->updated_at->diffForHumans() }})</small>
                             </a>

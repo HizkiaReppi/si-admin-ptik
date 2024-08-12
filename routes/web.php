@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HeadOfDepartmentController;
@@ -35,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pimpinan-jurusan/create/sekretaris-jurusan', [HeadOfDepartmentController::class, 'create'])->name('dashboard.pimpinan-jurusan.sekjur.create');
     Route::resource('/pimpinan-jurusan', HeadOfDepartmentController::class)->names('dashboard.pimpinan-jurusan')->except('create');
 
+    Route::resource('/pengumuman', AnnouncementController::class)->names('dashboard.announcements');
     Route::resource('/kategori', CategoryController::class)->names('dashboard.category');
     Route::resource('/pengajuan-surat', SubmissionController::class)->names('dashboard.submission')->except('edit');
     Route::resource('/pengajuan', SubmissionStudentController::class)->names('dashboard.submission.student')->except('create', 'store', 'show', 'edit', 'update');

@@ -30,6 +30,16 @@
                     <label for="email" class="form-label">Email</label>
                     <p class="border p-2 rounded m-0">{{ $administrator->email }}</p>
                 </div>
+                <div class="mb-3 col-md-12">
+                    <label for="last-activity" class="form-label">Terakhir Dilihat</label>
+                    <p class="border p-2 rounded m-0">
+                        @if ($administrator->isOnline())
+                            <span class="badge text-bg-primary">Online</span>
+                        @else
+                            <span class="badge text-bg-secondary">{{ $administrator->lastActivityAgo() }}</span>
+                        @endif
+                    </p>
+                </div>
             </div>
         </div>
         <div class="d-flex mt-1 mb-4 ms-3" style="margin-top: -15px">
