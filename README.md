@@ -1,5 +1,8 @@
 # Sistem Informasi Admin PTIK
 
+## Deskripsi
+Sistem Informasi Admin PTIK adalah aplikasi berbasis web yang dirancang untuk membantu Admin Jurusan dalam mengelola pengajuan surat mahasiswa di Jurusan Pendidikan Teknologi Informasi dan Komunikasi (PTIK), Fakultas Teknik, Universitas Negeri Manado.
+
 ## Fitur
 
 1. Mahasiswa
@@ -12,6 +15,7 @@
     - Manajemen Kategori
     - Manajemen Pengajuan Surat
     - Tambah Data Administrator
+    - Manajemen Pengumuman
 3. Super Admin
     - Semua Fitur Admin
     - Manajemen Administrator
