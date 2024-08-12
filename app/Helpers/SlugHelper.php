@@ -15,17 +15,13 @@ class SlugHelper
      */
     public static function generateSlug(Model $model, string $string): string
     {
-        $slug = Str::slug($string);
+        $initialSlug = Str::slug($string);
 
-        $exists = static::checkSlugExists($model, $slug);
+        $slug = $initialSlug;
+        $i = 2;
 
-        if ($exists) {
-            $i = 2;
-            do {
-                $newSlug = $slug . '-' . $i;
-                $exists = static::checkSlugExists($model, $slug);
-                $i++;
-            } while ($exists);
+        while (static::checkSlugExists($model, $slug)) {
+            $newSlug = $initialSlug . '-' . $i++;
             $slug = $newSlug;
         }
 
