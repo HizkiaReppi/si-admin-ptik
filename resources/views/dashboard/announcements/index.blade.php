@@ -74,7 +74,7 @@
         @endphp
             <div class="px-4 pb-4">
                 @foreach ($announcements as $announcement)
-                    <div class="border rounded">
+                    <div class="border rounded {{ $loop->last ? 'mb-0' : ' mb-2' }}">
                         <div class="card-body px-4 py-3">
                             <div class="blockquote mb-0 pb-0">
                                 <a href="{{ route('dashboard.announcements.show', $announcement->slug) }}">

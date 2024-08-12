@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Helpers\SlugHelper;
 use App\Models\Announcement;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 class AnnouncementController extends Controller
 {
@@ -16,6 +18,10 @@ class AnnouncementController extends Controller
      */
     public function index(): View
     {
+        $title = 'Apakah anda yakin?';
+        $text = 'Anda tidak akan bisa mengembalikannya!';
+        confirmDelete($title, $text);
+
         $announcements = Cache::rememberForever('announcements', function () {
             return Announcement::with('user')->latest()->get();
         });
@@ -34,13 +40,13 @@ class AnnouncementController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validatedData = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required'],
         ]);
-        
+
         DB::beginTransaction();
 
         try {
@@ -55,7 +61,6 @@ class AnnouncementController extends Controller
             return redirect()->route('dashboard.announcements.index')->with('toast_success', 'Announcement created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->with('error', 'Failed to create Announcement. Please try again.');
         }
     }
@@ -72,24 +77,52 @@ class AnnouncementController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Announcement $announcement)
+    public function edit(Announcement $pengumuman): View
     {
-        //
+        return view('dashboard.announcements.edit', compact('pengumuman'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Announcement $announcement)
+    public function update(Request $request, Announcement $pengumuman): RedirectResponse
     {
-        //
+        $validatedData = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required'],
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $pengumuman->title = $validatedData['title'];
+            $pengumuman->slug = SlugHelper::generateSlug($pengumuman, $validatedData['title']);
+            $pengumuman->content = $validatedData['content'];
+            $pengumuman->save();
+
+            DB::commit();
+            return redirect()->route('dashboard.announcements.index')->with('toast_success', 'Announcement updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            return redirect()->back()->with('error', 'Failed to update Announcement. Please try again.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Announcement $announcement)
+    public function destroy(Announcement $pengumuman): RedirectResponse
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $pengumuman->delete();
+            DB::commit();
+            return redirect()->route('dashboard.announcements.index')->with('toast_success', 'Announcement deleted successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to delete Announcement. Please try again.');
+        }
     }
 }
