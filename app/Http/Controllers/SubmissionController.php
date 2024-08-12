@@ -7,6 +7,7 @@ use App\Mail\SubmissionUpdated;
 use App\Models\Category;
 use App\Models\Student;
 use App\Models\Submission;
+use App\Models\SubmissionFile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -18,18 +19,15 @@ use Illuminate\View\View;
 
 class SubmissionController extends Controller
 {
-    public function __construct()
-    {
-        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
-            abort(403);
-        }
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index(): View
     {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
+            abort(403);
+        }
+
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
@@ -45,6 +43,10 @@ class SubmissionController extends Controller
      */
     public function create(): View
     {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
+            abort(403);
+        }
+
         $students = Cache::remember('students_submission', now()->addMinutes(60), function () {
             return Student::with('user')->get();
         });
@@ -60,6 +62,10 @@ class SubmissionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
+            abort(403);
+        }
+
         $validatedData = $request->validate([
             'category_id' => ['required', 'exists:categories,id'],
             'student_id' => ['required', 'exists:students,id'],
@@ -99,6 +105,10 @@ class SubmissionController extends Controller
      */
     public function show(Submission $pengajuan_surat): View
     {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
+            abort(403);
+        }
+
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
@@ -119,11 +129,39 @@ class SubmissionController extends Controller
         return view('dashboard.submissions.show', compact('submission', 'statuses'));
     }
 
+    public function view($id): View
+    {
+        $type = request()->query('type');
+
+        if($type == 'file-result') {
+            $submission = Submission::with(['files', 'category', 'student', 'student.user'])->where('id', $id)->first();
+            $filePath = str_replace('/storage', 'public', $submission->file_result);
+            $filePath = storage_path("app/" . $filePath);
+            $mimeType = mime_content_type($filePath);
+
+            $submission_file = new SubmissionFile();
+            $submission_file->file_path = $submission->file_result;
+        } else {
+            $submission_file = SubmissionFile::where('id', $id)->first();
+            $submission = Submission::with(['category', 'student', 'student.user'])->where('id', $submission_file->submission_id)->first();
+
+            $filePath = str_replace('/storage', 'public', $submission_file->file_path);
+            $filePath = storage_path("app/" . $filePath);
+            $mimeType = mime_content_type($filePath);
+        }
+
+        return view('dashboard.submissions.view', compact('submission_file', 'submission', 'mimeType'));
+    }
+
     /**
      * Update the specified resource in storage.
      */
     public function update(SubmissionAdminUpdateRequest $request, Submission $pengajuan_surat): RedirectResponse
     {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
+            abort(403);
+        }
+
         $validatedData = $request->validated();
 
         DB::beginTransaction();
@@ -162,6 +200,10 @@ class SubmissionController extends Controller
      */
     public function destroy(Submission $pengajuan_surat): RedirectResponse
     {
+        if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
+            abort(403);
+        }
+
         $isStatusValid = in_array($pengajuan_surat->status, ['rejected', 'canceled', 'expired']);
         $isStatusDoneAndOld = $pengajuan_surat->status == 'done' && $pengajuan_surat->updated_at->lt(now()->subDays(7));
 

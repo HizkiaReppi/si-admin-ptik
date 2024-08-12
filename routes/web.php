@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/pengumuman', AnnouncementController::class)->names('dashboard.announcements');
     Route::resource('/kategori', CategoryController::class)->names('dashboard.category');
     Route::resource('/pengajuan-surat', SubmissionController::class)->names('dashboard.submission')->except('edit');
+    Route::get('/pengajuan-surat/view/{id}', [SubmissionController::class, 'view'])->name('dashboard.submission.view');
     Route::resource('/pengajuan', SubmissionStudentController::class)->names('dashboard.submission.student')->except('create', 'store', 'show', 'edit', 'update');
     Route::get('/pengajuan/{category}', [SubmissionStudentController::class, 'show'])->name('dashboard.submission.student.show');
     Route::get('/pengajuan/{category}/detail/{submission}', [SubmissionStudentController::class, 'detail'])->name('dashboard.submission.student.detail');

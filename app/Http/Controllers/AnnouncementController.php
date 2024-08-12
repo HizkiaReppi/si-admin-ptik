@@ -108,7 +108,6 @@ class AnnouncementController extends Controller
             return redirect()->route('dashboard.announcements.index')->with('toast_success', 'Announcement updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->with('error', 'Failed to update Announcement. Please try again.');
         }
     }
