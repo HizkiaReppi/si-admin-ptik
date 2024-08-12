@@ -60,7 +60,7 @@
                             <div class="mb-3 col-6 col-md-4">
                                 <label for="requirement_{{ $loop->index }}"
                                     class="form-label">{{ $requirementName }}</label><br>
-                                <a href="{{ asset($file->file_path) }}" class="btn btn-secondary" download>Download</a>
+                                <a href="{{ route('dashboard.submission.view', $file->id) }}" class="btn btn-secondary">Lihat File</a>
                             </div>
                         @endforeach
                     </div>
@@ -69,7 +69,7 @@
                 @if ($submission->status === 'done' && $submission->file_result)
                     <div class="mt-3 col-md-12">
                         <label for="fileResult" class="form-label">File Hasil Surat</label><br />
-                        <a href="{{ asset($submission->file_result) }}" class="btn btn-success" download>Download</a>
+                        <a href="{{ route('dashboard.submission.view', [$submission->id, 'type' => 'file-result']) }}" class="btn btn-success">Lihat File</a>
                     </div>
                 @endif
             </div>
