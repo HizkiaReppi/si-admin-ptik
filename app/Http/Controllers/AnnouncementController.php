@@ -70,6 +70,10 @@ class AnnouncementController extends Controller
      */
     public function show(Announcement $pengumuman): View
     {
+        $title = 'Apakah anda yakin?';
+        $text = 'Anda tidak akan bisa mengembalikannya!';
+        confirmDelete($title, $text);
+
         $announcement = $pengumuman->load('user');
         return view('dashboard.announcements.show', compact('announcement'));
     }
