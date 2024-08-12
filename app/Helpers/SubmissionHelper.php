@@ -35,16 +35,16 @@ class SubmissionHelper
     public static function parseSubmissionBadgeClassNameStatus(string $type): string
     {
         $classes = [
-            'submitted' => 'text-primary',
-            'pending' => 'text-warning',
-            'proses_kajur' => 'text-info',
-            'proses_dekan' => 'text-info',
-            'done' => 'text-success',
-            'rejected' => 'text-danger',
-            'canceled' => 'text-danger',
-            'expired' => 'text-secondary',
+            'submitted' => 'primary',
+            'pending' => 'warning',
+            'proses_kajur' => 'info',
+            'proses_dekan' => 'info',
+            'done' => 'success',
+            'rejected' => 'danger',
+            'canceled' => 'danger',
+            'expired' => 'secondary',
         ];
 
-        return $classes[$type] ?? 'text-secondary';
+        return $classes[$type] ?? 'secondary';
     }
 }
