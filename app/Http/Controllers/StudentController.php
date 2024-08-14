@@ -47,10 +47,10 @@ class StudentController extends Controller
                     return $row->formattedNIM;
                 })
                 ->addColumn('Dosen Pembimbing I', function ($row) {
-                    return $row->firstSupervisor->fullname;
+                    return $row->firstSupervisorFullname;
                 })
                 ->addColumn('Dosen Pembimbing II', function ($row) {
-                    return $row->secondSupervisor->fullname;
+                    return $row->secondSupervisorFullname;
                 })
                 ->addColumn('Angkatan', function ($row) {
                     return $row->batch;
