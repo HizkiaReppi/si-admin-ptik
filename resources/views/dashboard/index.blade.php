@@ -97,4 +97,186 @@
             </div>
         </div>
     </div>
+
+    <div class="card px-4 pt-4 pb-3 mb-4">
+        <div class="row">
+            <div class="col-md-6 mt-md-3">
+                <h6>Total Pengajuan Surat Per Bulan</h6>
+                <div id="monthly-submissions"></div>
+            </div>
+            <div class="col-md-6 mt-md-3">
+                <h6>Total Pengajuan Surat Per Status</h6>
+                <div id="status-counts"></div>
+            </div>
+            <div class="col-md-12 mt-3">
+                <h6>Total Pengajuan Surat Per Kategori</h6>
+                <div id="category-counts"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card px-4 pt-4 pb-3 mb-4">
+        <div class="row">
+            <div class="col-md-6 mt-md-3">
+                <h6>Persebaran Mahasiswa per Angkatan</h6>
+                <div id="student-batch"></div>
+            </div>
+            <div class="col-md-6 mt-md-3">
+                <h6>Persebaran Mahasiswa per Konsentrasi</h6>
+                <div id="student-concentration"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const monthlySubmissionsResponse = await fetch('{{ route('dashboard.chart.monthlySubmissions') }}');
+                const monthlySubmissionsData = await monthlySubmissionsResponse.json();
+                const monthlySubmissionsOptions = {
+                    chart: {
+                        type: 'bar',
+                        height: '100%',
+                        width: '100%',
+                        responsive: [{
+                            breakpoint: 768,
+                            options: {
+                                chart: {
+                                    width: '100%',
+                                    height: '100%'
+                                },
+                                plotOptions: {
+                                    bar: {
+                                        horizontal: true
+                                    }
+                                }
+                            }
+                        }]
+                    },
+                    series: [{
+                        name: 'Submissions',
+                        data: monthlySubmissionsData.map(item => item.count)
+                    }],
+                    xaxis: {
+                        categories: monthlySubmissionsData.map(item => item.month)
+                    }
+                };
+                const monthlySubmissionsChart = new ApexCharts(document.querySelector("#monthly-submissions"), monthlySubmissionsOptions);
+                monthlySubmissionsChart.render();
+
+                const statusCountsResponse = await fetch('{{ route('dashboard.chart.statusCounts') }}');
+                const statusCountsData = await statusCountsResponse.json();
+                const statusCountsOptions = {
+                    chart: {
+                        type: 'donut',
+                        height: '100%',
+                        width: '100%',
+                        toolbar: {
+                            show: true
+                        }
+                    },
+                    series: statusCountsData.map(item => item.count),
+                    labels: statusCountsData.map(item => item.status),
+                    responsive: [{
+                        breakpoint: 768,
+                        options: {
+                            chart: {
+                                width: '100%',
+                                height: '100%'
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
+                };
+                const statusCountsChart = new ApexCharts(document.querySelector("#status-counts"), statusCountsOptions);
+                statusCountsChart.render();
+
+                const categoryCountsResponse = await fetch('{{ route('dashboard.chart.categoryCounts') }}');
+                const categoryCountsData = await categoryCountsResponse.json();
+                const categoryCountsOptions = {
+                    chart: {
+                        type: 'pie',
+                        height: '100%',
+                        width: '100%',
+                        toolbar: {
+                            show: true
+                        }
+                    },
+                    series: categoryCountsData.map(item => item.count),
+                    labels: categoryCountsData.map(item => item.category.name),
+                    responsive: [{
+                        breakpoint: 768,
+                        options: {
+                            chart: {
+                                width: '100%',
+                                height: '100%'
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
+                };
+                const categoryCountsChart = new ApexCharts(document.querySelector("#category-counts"), categoryCountsOptions);
+                categoryCountsChart.render();
+
+                const batchResponse = await fetch('{{ route('dashboard.chart.studentBatch') }}');
+                const batchData = await batchResponse.json();
+
+                const batchOptions = {
+                    chart: {
+                        type: 'bar',
+                        toolbar: {
+                            show: true
+                        }
+                    },
+                    series: [{
+                        name: 'Total Mahasiswa',
+                        data: batchData.map(item => item.count)
+                    }],
+                    xaxis: {
+                        categories: batchData.map(item => item.batch)
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true
+                    },
+                };
+
+                const batchChart = new ApexCharts(document.querySelector("#student-batch"), batchOptions);
+                batchChart.render();
+
+                const concentrationResponse = await fetch('{{ route('dashboard.chart.studentConcentration') }}');
+                const concentrationData = await concentrationResponse.json();
+
+                const concentrationOptions = {
+                    chart: {
+                        type: 'pie',
+                        toolbar: {
+                            show: true
+                        }
+                    },
+                    series: concentrationData.map(item => item.count),
+                    labels: concentrationData.map(item => item.concentration),
+                    dataLabels: {
+                        enabled: true
+                    },
+                };
+
+                const concentrationChart = new ApexCharts(document.querySelector("#student-concentration"), concentrationOptions);
+                concentrationChart.render();
+
+            } catch (error) {
+                console.error('Error fetching chart data:', error);
+            }
+        });
+    </script>
+
+
 </x-dashboard-layout>

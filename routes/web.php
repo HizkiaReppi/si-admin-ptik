@@ -7,7 +7,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HeadOfDepartmentController;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentChartController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubmissionChartController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\SubmissionStudentController;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +55,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile/student', [ProfileController::class, 'update_student'])->name('profile.update.student');
     Route::patch('/profile/lecturer', [ProfileController::class, 'update_lecturer'])->name('profile.update.lecturer');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/chart/monthly-submissions', [SubmissionChartController::class, 'getMonthlySubmissions'])->name('dashboard.chart.monthlySubmissions');
+    Route::get('/chart/status-counts', [SubmissionChartController::class, 'getStatusCounts'])->name('dashboard.chart.statusCounts');
+    Route::get('/chart/category-counts', [SubmissionChartController::class, 'getCategoryCounts'])->name('dashboard.chart.categoryCounts');
+
+    Route::get('/chart/student-batch-counts', [StudentChartController::class, 'getStudentBatch'])->name('dashboard.chart.studentBatch');
+    Route::get('/chart/student-batch-concentration', [StudentChartController::class, 'getStudentConcentration'])->name('dashboard.chart.studentConcentration');
 });
 
 require __DIR__ . '/auth.php';

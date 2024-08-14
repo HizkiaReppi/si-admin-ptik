@@ -112,9 +112,36 @@
 
         <!-- Overlay -->
         <div class="layout-overlay layout-menu-toggle"></div>
+
+        <div id="btn-scroll-to-top-wrapper" class="d-none position-fixed" style="z-index: 1000;bottom:30px;right:30px">
+            <button id="btn-scroll-to-top" class="btn btn-primary btn-scroll-to-top" style="width: 40px;height: 40px" type="button">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+        </div>
     </div>
 
     @include('sweetalert::alert')
+
+
+    <script>
+        const btnScrollToTopWrapper = document.querySelector('#btn-scroll-to-top-wrapper');
+        const btnScrollToTop = document.querySelector('#btn-scroll-to-top');
+
+        window.addEventListener('scroll', () => {
+            if(window.scrollY > 125) {
+                btnScrollToTopWrapper.classList.remove('d-none');
+            } else {
+                btnScrollToTopWrapper.classList.add('d-none');
+            }
+        })
+
+        btnScrollToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
 
     <script src="{{ $baseUrl }}/assets/vendor/libs/popper/popper.js"></script>
     <script src="{{ $baseUrl }}/assets/vendor/js/bootstrap.js"></script>

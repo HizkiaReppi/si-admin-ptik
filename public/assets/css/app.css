@@ -10,6 +10,18 @@ trix-toolbar [data-trix-button-group="file-tools"] {
     display: none !important;
 }
 
+#monthly-submissions, #status-counts, #category-counts {
+    width: 100%;
+    min-height: 300px;
+    max-height: 100%;
+}
+
+@media (max-width: 768px) {
+    #monthly-submissions, #status-counts, #category-counts {
+        min-height: 250px;
+    }
+}
+
 @media (min-width: 768px) {
     .notif-dropdown, .verify-email-card {
         width: 80vw;
