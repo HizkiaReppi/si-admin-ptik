@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\SlugHelper;
 use App\Models\Category;
+use App\Models\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
 {
@@ -24,17 +26,77 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request)
     {
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $categories = Cache::remember('categories', now()->addMinutes(60), function () {
-            return Category::with(['requirements', 'submissions'])->get();;
-        });
+        if ($request->ajax()) {
+            $model = Category::with(['requirements', 'submissions']);
 
-        return view('dashboard.category.index', compact('categories'));
+            return DataTables::of($model)
+                ->addIndexColumn()
+                ->addColumn('name', function ($row) {
+                    return $row->name;
+                })
+                ->addColumn('requirements', function ($row) {
+                    $content = null;
+                    if ($row->requirements->isEmpty()) {
+                        $content = '<p class="m-0 text-center">
+                                        Tidak Ada Persyaratan
+                                    </p>';
+                    } else {
+                        $content = '<ul class="mb-0">';
+
+                        foreach ($row->requirements as $requirement) {
+                            if ($requirement->file_path) {
+                                $content .= '<li><a href="' . $requirement->file_path . '" target="_blank">' . $requirement->name . '</a></li>';
+                            } else {
+                                $content .= '<li>' . $requirement->name . '</li>';
+                            }
+                        }
+
+                        $content .= '</ul>';
+                    }
+                    return $content;
+                })
+                ->addColumn('total', function ($row) {
+                    return $row->submissions->count();
+                })
+                ->addColumn('done', function ($row) {
+                    return $row->submissions->where('status', 'done')->count();
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item"
+                                    href="' . route('dashboard.category.show', $row->slug) . '">
+                                    <i class="bx bxs-user-detail me-1"></i> Detail
+                                </a>
+                                <a class="dropdown-item"
+                                    href="' . route('dashboard.category.edit', $row->slug) . '">
+                                    <i class="bx bx-edit-alt me-1"></i> Edit
+                                </a>
+                                <a class="dropdown-item"
+                                    href="' . route('dashboard.category.destroy', $row->slug) . '"
+                                    data-confirm-delete="true">
+                                    <i class="bx bx-trash me-1"></i> Delete
+                                </a>
+                            </div>
+                        </div>';
+                    return $btn;
+                })
+                ->rawColumns(['requirements', 'action'])
+                ->make(true);
+        }
+
+        return view('dashboard.category.index');
     }
 
     /**
@@ -91,10 +153,73 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $kategori): View
+    public function show(Request $request, Category $kategori)
     {
-        $submissions = $kategori->submissions()->with('student')->get();
-        return view('dashboard.category.show', compact('kategori', 'submissions'));
+        $title = 'Apakah anda yakin?';
+        $text = 'Anda tidak akan bisa mengembalikannya!';
+        confirmDelete($title, $text);
+
+        if ($request->ajax()) {
+            $model = Submission::where('category_id', $kategori->id)->with('student')->orderBy('created_at', 'desc');
+
+            return DataTables::of($model)
+                ->addIndexColumn()
+                ->addColumn('nim', function ($row) {
+                    return $row->student->formattedNIM;
+                })
+                ->addColumn('name', function ($row) {
+                    return $row->student->fullname;
+                })
+                ->addColumn('created_at', function ($row) {
+                    return $row->created_at->diffForHumans();
+                })
+                ->addColumn('updated_at', function ($row) {
+                    return $row->updated_at->diffForHumans();
+                })
+                ->addColumn('status', function ($row) {
+                    $content = '<span class="badge text-bg-' . $row->parseSubmissionBadgeClassNameStatus . '">
+                                ' . $row->parseSubmissionStatus . '
+                            </span>';
+                    return $content;
+                })
+                ->addColumn('action', function ($row) {
+                    $statuses = ['rejected', 'canceled', 'expired'];
+                    $isStatusInArray = in_array($row->status, $statuses);
+                    $isStatusDoneAndOld = $row->status == 'done' && $row->updated_at->lt(now()->subDays(7));
+
+                    $btn = null;
+                    if ($isStatusInArray || $isStatusDoneAndOld) {
+                        $btn = '<div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                        data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item"
+                                            href="' . route('dashboard.submission.show', $row->id) . '">
+                                            <i class="bx bxs-user-detail me-1"></i> Detail
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="' . route('dashboard.submission.destroy', $row->id) . '"
+                                            data-confirm-delete="true">
+                                            <i class="bx bx-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>';
+                    } else {
+                        $btn = '<a class="dropdown-item"
+                                    href="' . route('dashboard.submission.show', $row->id) . '">
+                                    <i class="bx bxs-user-detail me-1"></i> Detail
+                                </a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['status', 'action'])
+                ->make(true);
+        }
+
+        return view('dashboard.category.show', compact('kategori'));
     }
 
     /**

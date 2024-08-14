@@ -25,7 +25,7 @@
         </div>
         @if ($isAdminOrHeadOfDepartment)
             <div class="table-responsive text-nowrap px-4 pb-4">
-                <table class="table" id="table">
+                <table class="table" id="table-announcements">
                     <thead>
                         <tr>
                             <th class="text-center">Judul Pengumuman</th>
@@ -34,44 +34,10 @@
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="table-border-bottom-0">
-                        @foreach ($announcements as $announcement)
-                            <tr>
-                                <td class="fw-medium">{{ $announcement->title }}</td>
-                                <td class="text-center">{{ $announcement->created_at->diffForHumans() }}</td>
-                                <td class="text-center">{{ $announcement->user->name }}</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                            data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item"
-                                                href="{{ route('dashboard.announcements.show', $announcement->slug) }}">
-                                                <i class="bx bxs-user-detail me-1"></i> Detail
-                                            </a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('dashboard.announcements.edit', $announcement->slug) }}">
-                                                <i class="bx bx-edit-alt me-1"></i> Edit
-                                            </a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('dashboard.announcements.destroy', $announcement->slug) }}"
-                                                data-confirm-delete="true">
-                                                <i class="bx bx-trash me-1"></i> Delete
-                                            </a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
+                    <tbody class="table-border-bottom-0"></tbody>
                 </table>
             </div>
         @else
-        @php
-            $announcements = $announcements->take(10);
-        @endphp
             <div class="px-4 pb-4">
                 @foreach ($announcements as $announcement)
                     <div class="border rounded {{ $loop->last ? 'mb-0' : ' mb-2' }}">
@@ -91,4 +57,20 @@
             </div>
         @endif
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#table-announcements').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('dashboard.announcements.index') }}',
+                columns: [
+                    { data: 'title', name: 'title' },
+                    { data: 'created_at', name: 'created_at', className: 'text-center' },
+                    { data: 'user', name: 'user', className: 'text-center' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'}
+                ]
+            });
+        });
+    </script>
 </x-dashboard-layout>

@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="table-responsive text-nowrap px-4 pb-4">
-            <table class="table" id="table">
+            <table class="table" id="table-submission">
                 <thead>
                     <tr>
                         <th class="text-center">Tipe Pengajuan</th>
@@ -34,53 +34,25 @@
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="table-border-bottom-0">
-                    @foreach ($submissions as $submission)
-                        <tr>
-                            <td class="text-md-center">{{ $submission->category->name }}</td>
-                            <td class="text-center">{{ $submission->created_at->diffForHumans() }}</td>
-                            <td class="text-center">{{ $submission->updated_at->diffForHumans() }}</td>
-                            <td class="text-center">
-                                <span
-                                    class="badge text-bg-{{ $submission->parseSubmissionBadgeClassNameStatus }}">
-                                    {{ $submission->parseSubmissionStatus }}
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                @if ($submission->status !== 'submitted')
-                                    <a class="dropdown-item"
-                                        href="{{ route('dashboard.submission.student.detail', [$submission->category->slug, $submission->id]) }}">
-                                        <i class="bx bxs-user-detail me-1"></i> Detail
-                                    </a>
-                                @else
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                            data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item"
-                                                href="{{ route('dashboard.submission.student.show', $submission->id) }}">
-                                                <i class="bx bxs-user-detail me-1"></i> Detail
-                                            </a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('dashboard.submission.student.edit', [$submission->category->slug, $submission->id]) }}">
-                                                <i class="bx bx-edit-alt me-1"></i> Edit
-                                            </a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('dashboard.submission.student.destroy', $submission->id) }}"
-                                                data-confirm-delete="true">
-                                                <i class="bx bx-trash me-1"></i> Delete
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+                <tbody class="table-border-bottom-0"></tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#table-submission').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('dashboard.submission.student.index') }}',
+                columns: [
+                    { data: 'category', name: 'category', searchable: false },
+                    { data: 'created_at', name: 'created_at', className: 'text-center', orderable: false, searchable: false },
+                    { data: 'updated_at', name: 'updated_at', className: 'text-center', orderable: false, searchable: false },
+                    { data: 'status', name: 'status', className: 'text-center', searchable: false },
+                    { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'}
+                ]
+            });
+        });
+    </script>
 </x-dashboard-layout>

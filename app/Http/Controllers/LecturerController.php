@@ -8,12 +8,15 @@ use App\Models\Lecturer;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class LecturerController extends Controller
 {
@@ -27,16 +30,61 @@ class LecturerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request)
     {
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $lecturers = Cache::rememberForever('lecturers', function () {
-            return Lecturer::with('user')->get();
-        });
-        return view('dashboard.lecturer.index', compact('lecturers'));
+        if ($request->ajax()) {
+            $model = Lecturer::with('user');
+
+            return DataTables::of($model)
+                ->addIndexColumn()
+                ->addColumn('fullname', function ($row) {
+                    return $row->fullname;
+                })
+                ->addColumn('nidn', function ($row) {
+                    return $row->nidn;
+                })
+                ->addColumn('nip', function ($row) {
+                    return $row->formattedNIP;
+                })
+                ->addColumn('action', function ($row) {
+                    $btn =
+                        '<div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                        data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item"
+                                            href="' .
+                        route('dashboard.lecturer.show', $row->id) .
+                        '">
+                                            <i class="bx bxs-user-detail me-1"></i> Detail
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="' .
+                        route('dashboard.lecturer.edit', $row->id) .
+                        '">
+                                            <i class="bx bx-edit-alt me-1"></i> Edit
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="' .
+                        route('dashboard.lecturer.destroy', $row->id) .
+                        '"
+                                            data-confirm-delete="true">
+                                            <i class="bx bx-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>';
+                    return $btn;
+                })
+                ->make(true);
+        }
+
+        return view('dashboard.lecturer.index');
     }
 
     /**

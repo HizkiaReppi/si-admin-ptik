@@ -16,13 +16,14 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class SubmissionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request)
     {
         if (!Gate::allows('admin') && !Gate::allows('super-admin') && !Gate::allows('HoD')) {
             abort(403);
@@ -32,10 +33,67 @@ class SubmissionController extends Controller
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $submissions = Cache::remember('submissions', now()->addMinutes(30), function () {
-            return Submission::with(['category', 'student', 'student.user'])->get();
-        });
-        return view('dashboard.submissions.index', compact('submissions'));
+        if ($request->ajax()) {
+            $model = Submission::with(['category', 'student', 'student.user'])->orderBy('created_at', 'desc');
+
+            return DataTables::of($model)
+                ->addIndexColumn()
+                ->addColumn('nim', function ($row) {
+                    return $row->student->formattedNIM;
+                })
+                ->addColumn('name', function ($row) {
+                    return $row->student->fullname;
+                })
+                ->addColumn('category', function ($row) {
+                    return $row->category->name;
+                })
+                ->addColumn('created_at', function ($row) {
+                    return $row->created_at->diffForHumans();
+                })
+                ->addColumn('status', function ($row) {
+                    $content = '<span class="badge text-bg-' . $row->parseSubmissionBadgeClassNameStatus . '">
+                                ' . $row->parseSubmissionStatus . '
+                            </span>';
+                    return $content;
+                })
+                ->addColumn('action', function ($row) {
+                    $statuses = ['rejected', 'canceled', 'expired'];
+                    $isStatusInArray = in_array($row->status, $statuses);
+                    $isStatusDoneAndOld = $row->status == 'done' && $row->updated_at->lt(now()->subDays(7));
+
+                    $btn = null;
+                    if ($isStatusInArray || $isStatusDoneAndOld) {
+                        $btn = '<div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                        data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item"
+                                            href="' . route('dashboard.submission.show', $row->id) . '">
+                                            <i class="bx bxs-user-detail me-1"></i> Detail
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="' . route('dashboard.submission.destroy', $row->id) . '"
+                                            data-confirm-delete="true">
+                                            <i class="bx bx-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>';
+                    } else {
+                        $btn = '<a class="dropdown-item"
+                                    href="' . route('dashboard.submission.show', $row->id) . '">
+                                    <i class="bx bxs-user-detail me-1"></i> Detail
+                                </a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['status', 'action'])
+                ->make(true);
+        }
+
+        return view('dashboard.submissions.index');
     }
 
     /**
@@ -133,7 +191,7 @@ class SubmissionController extends Controller
     {
         $type = request()->query('type');
 
-        if($type == 'file-result') {
+        if ($type == 'file-result') {
             $submission = Submission::with(['files', 'category', 'student', 'student.user'])->where('id', $id)->first();
             $filePath = str_replace('/storage', 'public', $submission->file_result);
             $filePath = storage_path("app/" . $filePath);

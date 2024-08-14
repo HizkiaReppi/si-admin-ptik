@@ -22,10 +22,11 @@
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/vendor/css/core.css">
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/vendor/css/theme-default.css">
     <link rel="stylesheet" href="{{ $baseUrl }}/assets/vendor/libs/trix/trix.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
     <script src="{{ $baseUrl }}/assets/vendor/libs/trix/trix.umd.min.js"></script>
     <script src="{{ $baseUrl }}/assets/vendor/js/helpers.js"></script>
     <script src="{{ $baseUrl }}/assets/js/config.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
+    <script src="{{ $baseUrl }}/assets/vendor/libs/jquery/jquery.js"></script>
     <script src="https://kit.fontawesome.com/29057e6c17.js" crossorigin="anonymous"></script>
 </head>
 
@@ -115,7 +116,6 @@
 
     @include('sweetalert::alert')
 
-    <script src="{{ $baseUrl }}/assets/vendor/libs/jquery/jquery.js"></script>
     <script src="{{ $baseUrl }}/assets/vendor/libs/popper/popper.js"></script>
     <script src="{{ $baseUrl }}/assets/vendor/js/bootstrap.js"></script>
     <script src="{{ $baseUrl }}/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
@@ -123,19 +123,10 @@
     <script src="{{ $baseUrl }}/assets/vendor/libs/apex-charts/apexcharts.js"></script>
     <script src="{{ $baseUrl }}/assets/js/main.js"></script>
     <script src="{{ $baseUrl }}/assets/js/bootstrap.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 
-    <script>
-        new DataTable('#table');
-
-        const table2 = document.getElementById('table-2');
-        if (table2) {
-            new DataTable('#table-2');
-        }
-    </script>
-
     <!-- Place this tag in your head or just before your close body tag. -->
+    @stack('scripts')
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
 </body>

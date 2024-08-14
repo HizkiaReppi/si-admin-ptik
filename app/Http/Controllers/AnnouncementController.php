@@ -10,23 +10,70 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Yajra\DataTables\Facades\DataTables;
 
 class AnnouncementController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request)
     {
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $announcements = Cache::rememberForever('announcements', function () {
-            return Announcement::with('user')->latest()->get();
-        });
+        $adminOrHeadOfDepartmentRole = ['admin', 'HoD', 'super-admin'];
+        $isAdminOrHeadOfDepartment = in_array(auth()->user()->role, $adminOrHeadOfDepartmentRole);
+        
+        if (!$isAdminOrHeadOfDepartment) {
+            $announcements = Announcement::with('user')->latest()->take(10)->get();
+            return view('dashboard.announcements.index', compact('announcements'));
+        } else {
+            if ($request->ajax()) {
+                $model = Announcement::with('user')->latest();
 
-        return view('dashboard.announcements.index', compact('announcements'));
+                return DataTables::of($model)
+                    ->addIndexColumn()
+                    ->addColumn('title', function ($row) {
+                        return $row->title;
+                    })
+                    ->addColumn('created_at', function ($row) {
+                        return $row->created_at->diffForHumans();
+                    })
+                    ->addColumn('user', function ($row) {
+                        return $row->user->name;
+                    })
+                    ->addColumn('action', function ($row) {
+                        $btn = '
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                    data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.announcements.show', $row->slug) . '">
+                                        <i class="bx bxs-user-detail me-1"></i> Detail
+                                    </a>
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.announcements.edit', $row->slug) . '">
+                                        <i class="bx bx-edit-alt me-1"></i> Edit
+                                    </a>
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.announcements.destroy', $row->slug) . '"
+                                        data-confirm-delete="true">
+                                        <i class="bx bx-trash me-1"></i> Delete
+                                    </a>
+                                </div>
+                            </div>';
+                        return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }
+            return view('dashboard.announcements.index');
+        }
     }
 
     /**

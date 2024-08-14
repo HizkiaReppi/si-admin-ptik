@@ -8,12 +8,14 @@ use App\Models\Student;
 use App\Models\User;
 use App\Models\Lecturer;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
+use Yajra\DataTables\Facades\DataTables;
 
 class StudentController extends Controller
 {
@@ -27,16 +29,67 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request)
     {
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
         confirmDelete($title, $text);
 
-        $students = Cache::rememberForever('students', function () {
-            return Student::with('firstSupervisor', 'secondSupervisor', 'firstSupervisor.user', 'secondSupervisor.user')->get();
-        });
-        return view('dashboard.student.index', compact('students'));
+        if ($request->ajax()) {
+            $model = Student::with('user', 'firstSupervisor', 'secondSupervisor', 'firstSupervisor.user', 'secondSupervisor.user');
+
+            return DataTables::of($model)
+                ->addIndexColumn()
+                ->addColumn('fullname', function ($row) {
+                    return $row->fullname;
+                })
+                ->addColumn('nim', function ($row) {
+                    return $row->formattedNIM;
+                })
+                ->addColumn('Dosen Pembimbing I', function ($row) {
+                    return $row->firstSupervisor->fullname;
+                })
+                ->addColumn('Dosen Pembimbing II', function ($row) {
+                    return $row->secondSupervisor->fullname;
+                })
+                ->addColumn('Angkatan', function ($row) {
+                    return $row->batch;
+                })
+                ->addColumn('action', function ($row) {
+                    $btn =
+                        '<div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                        data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item"
+                                            href="' .
+                        route('dashboard.student.show', $row->id) .
+                        '">
+                                            <i class="bx bxs-user-detail me-1"></i> Detail
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="' .
+                        route('dashboard.student.edit', $row->id) .
+                        '">
+                                            <i class="bx bx-edit-alt me-1"></i> Edit
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="' .
+                        route('dashboard.student.destroy', $row->id) .
+                        '"
+                                            data-confirm-delete="true">
+                                            <i class="bx bx-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>';
+                    return $btn;
+                })
+                ->make(true);
+        }
+
+        return view('dashboard.student.index');
     }
 
     /**
@@ -82,7 +135,7 @@ class StudentController extends Controller
             $student = new Student();
             $student->user_id = $user->id;
             $student->lecturer_id_1 = $validatedData['lecturer_id_1'];
-            $student->lecturer_id_2 = $validatedData['lecturer_id_2'] !== "choose" ? $validatedData['lecturer_id_2'] : null;
+            $student->lecturer_id_2 = $validatedData['lecturer_id_2'] !== 'choose' ? $validatedData['lecturer_id_2'] : null;
             $student->nim = $validatedData['nim'];
             $student->batch = $validatedData['angkatan'];
             $student->concentration = $validatedData['konsentrasi'];
@@ -161,7 +214,7 @@ class StudentController extends Controller
             $mahasiswa->user->save();
 
             $mahasiswa->lecturer_id_1 = $validatedData['lecturer_id_1'];
-            $mahasiswa->lecturer_id_2 = $validatedData['lecturer_id_2'] !== "choose" ? $validatedData['lecturer_id_2'] : null;
+            $mahasiswa->lecturer_id_2 = $validatedData['lecturer_id_2'] !== 'choose' ? $validatedData['lecturer_id_2'] : null;
             $mahasiswa->batch = $validatedData['angkatan'];
             $mahasiswa->concentration = $validatedData['konsentrasi'];
             $mahasiswa->phone_number = $validatedData['no-hp'];

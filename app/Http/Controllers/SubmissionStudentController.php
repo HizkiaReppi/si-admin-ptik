@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class SubmissionStudentController extends Controller
 {
@@ -24,7 +25,7 @@ class SubmissionStudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request)
     {
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
@@ -32,17 +33,70 @@ class SubmissionStudentController extends Controller
 
         $student = auth()->user()->student;
 
-        $submissions = Cache::remember('submissions_student_' . $student->id, now()->addMinutes(30), function () use ($student) {
-            return Submission::where('student_id', $student->id)
-                ->with(['category'])
-                ->get();
-        });
-
         $categories = Cache::remember('categories_submission', now()->addMinutes(60), function () {
             return Category::all(['name', 'slug']);
         });
 
-        return view('dashboard.submission-student.index', compact('submissions', 'categories'));
+        if ($request->ajax()) {
+            $model = Submission::where('student_id', $student->id)
+            ->with(['category']);
+
+            return DataTables::of($model)
+                ->addIndexColumn()
+                ->addColumn('category', function ($row) {
+                    return $row->category->name;
+                })
+                ->addColumn('created_at', function ($row) {
+                    return $row->created_at->diffForHumans();
+                })
+                ->addColumn('updated_at', function ($row) {
+                    return $row->updated_at->diffForHumans();
+                })
+                ->addColumn('status', function ($row) {
+                    $content = '<span class="badge text-bg-' . $row->parseSubmissionBadgeClassNameStatus . '">
+                                ' . $row->parseSubmissionStatus . '
+                            </span>';
+                    return $content;
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = null;
+                    if ($row->status !== 'submitted') {
+                        $btn = '<a class="dropdown-item"
+                                    href="' . route('dashboard.submission.student.detail', [$row->category->slug, $row->id]) .' ">
+                                    <i class="bx bxs-user-detail me-1"></i> Detail
+                                </a>';
+                    } else {
+                        $btn = '
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                    data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.submission.student.show', $row->id) . '">
+                                        <i class="bx bxs-user-detail me-1"></i> Detail
+                                    </a>
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.submission.student.edit', [$row->category->slug, $row->id]) . '">
+                                        <i class="bx bx-edit-alt me-1"></i> Edit
+                                    </a>
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.submission.student.destroy', $row->id) . '"
+                                        data-confirm-delete="true">
+                                        <i class="bx bx-trash me-1"></i> Delete
+                                    </a>
+                                </div>
+                            </div>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['status', 'action'])
+                ->make(true);
+        }
+
+        return view('dashboard.submission-student.index', compact('categories'));
     }
 
     /**
@@ -93,7 +147,7 @@ class SubmissionStudentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category): View
+    public function show(Request $request, Category $category)
     {
         $title = 'Apakah anda yakin?';
         $text = 'Anda tidak akan bisa mengembalikannya!';
@@ -101,13 +155,64 @@ class SubmissionStudentController extends Controller
 
         $student = auth()->user()->student;
 
-        $submissions = Cache::remember('submissions_student_category_' . $student->id . '_' . $category->id, now()->addMinutes(30), function () use ($student, $category) {
-            return Submission::where('student_id', $student->id)
-                ->where('category_id', $category->id)
-                ->get();
-        });
+        if ($request->ajax()) {
+            $model = Submission::where('student_id', $student->id)
+            ->where('category_id', $category->id)
+            ->with(['category']);
 
-        return view('dashboard.submission-student.show', compact('submissions', 'category'));
+            return DataTables::of($model)
+                ->addIndexColumn()
+                ->addColumn('created_at', function ($row) {
+                    return $row->created_at->diffForHumans();
+                })
+                ->addColumn('updated_at', function ($row) {
+                    return $row->updated_at->diffForHumans();
+                })
+                ->addColumn('status', function ($row) {
+                    $content = '<span class="badge text-bg-' . $row->parseSubmissionBadgeClassNameStatus . '">
+                                ' . $row->parseSubmissionStatus . '
+                            </span>';
+                    return $content;
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = null;
+                    if ($row->status !== 'submitted') {
+                        $btn = '<a class="dropdown-item"
+                                    href="' . route('dashboard.submission.student.detail', [$row->category->slug, $row->id]) .' ">
+                                    <i class="bx bxs-user-detail me-1"></i> Detail
+                                </a>';
+                    } else {
+                        $btn = '
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                    data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.submission.student.detail', [$row->category->slug, $row->id]) . '">
+                                        <i class="bx bxs-user-detail me-1"></i> Detail
+                                    </a>
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.submission.student.edit', [$row->category->slug, $row->id]) . '">
+                                        <i class="bx bx-edit-alt me-1"></i> Edit
+                                    </a>
+                                    <a class="dropdown-item"
+                                        href="' . route('dashboard.submission.student.destroy', $row->id) . '"
+                                        data-confirm-delete="true">
+                                        <i class="bx bx-trash me-1"></i> Delete
+                                    </a>
+                                </div>
+                            </div>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['status', 'action'])
+                ->make(true);
+        }
+
+        return view('dashboard.submission-student.show', compact('category'));
     }
 
     /**
