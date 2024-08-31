@@ -1,4 +1,4 @@
-<x-auth-layout title="Konfirmasi Password">
+<x-auth-layout title="Verifikasi Email">
     <section class="d-flex justify-content-center align-items-center" style="height: 100vh;">
         <div class="card verify-email-card">
             <div class="card-body">
