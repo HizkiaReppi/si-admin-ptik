@@ -1,9 +1,23 @@
+@php
+    $baseUrl = config('app.url');
+
+    $baseUrl = explode('://', $baseUrl)[1];
+
+    if (request()->secure()) {
+        $baseUrl = 'https://' . $baseUrl;
+    } else {
+        $baseUrl = 'http://' . $baseUrl;
+    }
+@endphp
 <x-auth-layout title="Verifikasi Email">
     <section class="d-flex justify-content-center align-items-center" style="height: 100vh;">
         <div class="card verify-email-card">
             <div class="card-body">
-                <div class="app-brand justify-content-center fs-2 mb-3">
-                    ADMIN PTIK
+                <div class="app-brand justify-content-center fs-2 mb-3" style="display:flex;flex-direction:column;">
+                    <img src="{{ $baseUrl }}/assets/images/logo-unima.png" class="img-fluid" style="width: 100px" />
+                    <a href="{{ route('home') }}" class="app-brand-link mt-3">
+                        ADMIN PTIK
+                    </a>
                 </div>
                 <div class="mb-2 text-center">
                     Terimakasih telah mendaftar! Sebelum memulai, bisakah anda memverifikasi alamat email anda dengan

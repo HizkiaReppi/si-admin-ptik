@@ -1,11 +1,23 @@
+@php
+    $baseUrl = config('app.url');
+
+    $baseUrl = explode('://', $baseUrl)[1];
+
+    if (request()->secure()) {
+        $baseUrl = 'https://' . $baseUrl;
+    } else {
+        $baseUrl = 'http://' . $baseUrl;
+    }
+@endphp
 <x-auth-layout title="Login">
     <!-- Register -->
     <section class="d-flex justify-content-center align-items-center" style="width: 100%; height: 100vh;">
         <div class="card">
             <div class="card-body">
                 <!-- Logo -->
-                <div class="app-brand justify-content-center fs-2 mb-3">
-                    <a href="/" class="app-brand-link">
+                <div class="app-brand justify-content-center fs-2 mb-3" style="display:flex;flex-direction:column;">
+                    <img src="{{ $baseUrl }}/assets/images/logo-unima.png" class="img-fluid" style="width: 100px" />
+                    <a href="{{ route('home') }}" class="app-brand-link mt-3">
                         ADMIN PTIK
                     </a>
                 </div>
@@ -49,11 +61,11 @@
                     </div>
                 </form>
                 <p class="text-center">
-                  <span>Belum memiliki akun?</span>
-                  <a href="{{ route('register') }}">
-                    <span>Daftar sekarang!</span>
-                  </a>
-              </p>
+                    <span>Belum memiliki akun?</span>
+                    <a href="{{ route('register') }}">
+                        <span>Daftar sekarang!</span>
+                    </a>
+                </p>
             </div>
         </div>
     </section>
