@@ -43,7 +43,7 @@ class SubmissionUpdated extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.submission-updated',
+            view: 'mails.submission-updated',
         );
     }
 
